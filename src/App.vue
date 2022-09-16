@@ -23,4 +23,11 @@ nav {
     }
   }
 }
+
+* {
+  box-sizing: border-box;
+}
+img {
+  display: block;
+}
 </style>
