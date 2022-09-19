@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <card v-for="item in cardsData" :key="item" :card-data="item"></card>
+    <card v-for="item in allCards" :key="item" :card-data="item"></card>
     
     <div class="cache-box"></div>
   </div>
@@ -9,21 +9,18 @@
 <script>
 import Card from '@/components/card.vue'
 import CacheBox from '@/components/cacheBox.vue'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   components: {
     Card,
     CacheBox
   },
-  data(){
-    return {
-      cardsData: []
-    }
+  computed: {
+    ...mapState(['allCards'])
   },
-  computed: {},
   mounted(){
+    // 初始化牌堆
     this.initDeck({groupCount: 3, perGroup: 3})
-    this.cardsData = Object.assign({}, this.getDeck())
     // 获取缓存堆与页面的坐标
     const cacheBoxPos = document.querySelector(".cache-box").getBoundingClientRect()
     const pagePos = document.querySelector(".page").getBoundingClientRect()
@@ -32,7 +29,6 @@ export default {
   },
   methods: {
     ...mapMutations(['initDeck', 'initCacheBoxPos']),
-    ...mapGetters(['getDeck'])
   }
 }
 </script>

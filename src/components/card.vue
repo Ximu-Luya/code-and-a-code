@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 export default {
   props: ["cardData"],
   data(){
@@ -27,11 +27,11 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['moveToCache']),
+    ...mapActions(['saveInCache']),
     handleClick(){
       if (this.cached) return null
 
-      this.moveToCache(this.cardData.id)
+      this.saveInCache(this.cardData)
       this.cached = true
     }
   }
