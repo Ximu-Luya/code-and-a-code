@@ -4,7 +4,7 @@ import Game from '../views/game.vue'
 const routes = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/game'
   },
   {
     path: '/game',
