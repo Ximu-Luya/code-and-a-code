@@ -30,13 +30,17 @@ export default createStore({
     },
     // 可选项
     options: {
+      // 卡牌大小
       card: {
         width: 50,
         height: 60
       },
+      // 缓存堆最大容量
       cacheMax: 6,
-      groupCount: 1,
+      // 每组相同卡片数量
       perGroup: 3,
+      // 卡牌组数
+      groupCount: 20,
     },
   },
   getters: {},
@@ -44,7 +48,7 @@ export default createStore({
     /**
      * 初始化缓存堆坐标
      * @param state
-     * @param {x, y} pos 坐标
+     * @param pos 牌堆与缓存堆坐标
      */
     initBoxPos(state, pos) {
       state.boxPos.deckBoxPos.top = pos.deckBoxPos.top
@@ -57,7 +61,6 @@ export default createStore({
     /**
      * 初始化牌堆
      * @param state
-     * @param {groupCount, perGroup} {牌组数, 每组相同牌数量}
      */
     initDeck(state) {
       const { boxPos, options } = state
@@ -100,16 +103,16 @@ export default createStore({
       }
     },
     /**
-     * 卡牌打到规定数量进行消除
+     * 消除总卡牌数据中相同的卡牌
      * @param state
-     * @param {id, code, pos} currentCard 卡牌数据
+     * @param currentCard 卡牌数据
      */
     removeSameCard(state, currentCard) {
       state.cache = state.cache.filter(item => item.code !== currentCard.code)
       state.allCards = state.allCards.filter(item => item.code !== currentCard.code)
     },
     /**
-     * 重新计算缓存堆卡牌的坐标
+     * 重新计算缓存堆中卡牌的坐标
      * @param state
      */
     rerenderCacheBox(state) {
@@ -120,21 +123,28 @@ export default createStore({
   },
   actions: {
     /**
-     * 点击卡片保存至缓存堆与后序决策
+     * 点击卡牌，移入缓存堆，进行后续决策
      * @param context
      * @param currentCard 当前卡牌数据
      */
     async saveInCache({ state, commit }, currentCard) {
+      // 缓存堆达到数量上限时，不允许继续添加卡牌
+      if(state.cache.length === state.options.cacheMax) return
+      // 卡牌移入缓存堆
       commit('moveToCache', currentCard)
 
+      // 在缓存堆中寻找与当前卡牌code值相同的卡牌
       const targets = state.cache.filter(item => item.code === currentCard.code)
-      // 如果该卡牌数量达到3张，返回没有该卡牌的缓存堆，即消除卡牌
+      // 如果该卡牌在缓存堆中的数量达到3张
       if (targets.length === 3) {
+        // 所有缓存堆中将要消除的相同卡牌
         const sameCard = state.allCards.filter(item => item.code === currentCard.code)
+        // 执行消除动画
         sameCard.forEach(item => (item.disappearing = true))
-
+        // 延时消除动画的时间后，从总卡牌数据中消除卡牌
         setTimeout(() => {
           commit('removeSameCard', currentCard)
+          // 重新计算缓存堆中剩余卡牌的坐标
           commit('rerenderCacheBox')
           // 总卡牌数量为0，游戏胜利
           if (state.allCards.length === 0) {
