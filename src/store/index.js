@@ -35,7 +35,7 @@ export default createStore({
         height: 60
       },
       cacheMax: 6,
-      groupCount: 20,
+      groupCount: 1,
       perGroup: 3,
     },
   },
@@ -136,12 +136,17 @@ export default createStore({
         setTimeout(() => {
           commit('removeSameCard', currentCard)
           commit('rerenderCacheBox')
+          // 总卡牌数量为0，游戏胜利
+          if (state.allCards.length === 0) {
+            alert('游戏胜利，恭喜你')
+            commit('initDeck')
+          }
         }, 1000)
       } else {
-        // 选择卡牌进入缓存堆后，没有消除卡牌且卡牌数量达到了缓存堆上限，则游戏结束
+        // 缓存堆卡牌达到数量上限且无法消除卡牌，则游戏结束
         if(state.cache.length === state.options.cacheMax) {
           setTimeout(() => {
-            alert('游戏结束')
+            alert('游戏结束，点击确定重新开始')
             commit('initDeck')
           }, 310);
           return 
