@@ -1,6 +1,7 @@
 <template>
   <div
     class="card-item layout-center box-shadow"
+    :class="{ 'animate__animated animate__bounceOut': cardData.disappearing}"
     @click="handleClick"
     :style="position"
   >

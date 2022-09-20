@@ -47,6 +47,7 @@ export default createStore({
               x: getRandomInt(0, 500),
               y: getRandomInt(0, 700)
             },
+            disappearing: false
           })
         }
       }
@@ -91,15 +92,20 @@ export default createStore({
     },
   },
   actions: {
-    saveInCache({state, commit}, currentCard){
+    async saveInCache({state, commit}, currentCard){
       commit('moveToCache', currentCard)
 
       const targets = state.cache.filter(item => item.code === currentCard.code)
       console.log(targets)
       // 如果该卡牌数量达到3张，返回没有该卡牌的缓存堆，即消除卡牌
       if(targets.length === 3){
-        commit('removeSameCard', currentCard)
-        commit('rerenderCacheBox')
+        const sameCard = state.allCards.filter(item => item.code === currentCard.code)
+        sameCard.forEach(item => item.disappearing = true)
+
+        setTimeout(() => {
+          commit('removeSameCard', currentCard)
+          commit('rerenderCacheBox')
+        }, 1000)
       }
     }
   },

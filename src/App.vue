@@ -6,6 +6,7 @@
 
 <style lang="scss">
 @import url("@/main.scss");
+@import url("animate.css");
 #app {
   font-family: Microsoft YaHei, Helvetica, Arial, sans-serif;
   background-color: #f7f7f7;
