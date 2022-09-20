@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Home from '../views/home.vue'
+import Game from '../views/game.vue'
 
 const routes = [
   {
@@ -7,8 +7,8 @@ const routes = [
     redirect: '/home'
   },
   {
-    path: '/home',
-    component: Home
+    path: '/game',
+    component: Game
   },
 ]
 

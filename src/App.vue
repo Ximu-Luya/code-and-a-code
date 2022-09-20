@@ -11,6 +11,9 @@
   font-family: Microsoft YaHei, Helvetica, Arial, sans-serif;
   background-color: #f7f7f7;
 }
+</style>
+
+<style lang="scss" scoped>
 .page {
   margin: 0 auto 0 auto;
   max-width: 600px;

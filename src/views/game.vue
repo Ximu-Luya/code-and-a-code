@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="game">
     <card v-for="item in allCards" :key="item" :card-data="item"></card>
     
     <div class="deck">
@@ -51,7 +51,7 @@ export default {
      */
     initPos(){
       // 获取缓存堆与页面的坐标
-      const pagePos = document.querySelector(".page").getBoundingClientRect()
+      const pagePos = document.querySelector(".game").getBoundingClientRect()
       const cacheBoxPos = document.querySelector(".cache-box").getBoundingClientRect()
 
       // 初始化缓存堆相对页面的坐标
@@ -73,7 +73,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.home {
+.game {
   position: relative;
   width: 100%;
   height: 100%;
