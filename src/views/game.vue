@@ -8,6 +8,15 @@
     <div class="cache">
       <div class="cache-box" :style="cacheBoxSize"></div>
     </div>
+
+    <div class="game-function" v-if="false">
+      <div class="item">
+        <i class="el-icon-refresh"></i>
+      </div>
+      <div class="item">
+        <i class="el-icon-upload2"></i>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -90,12 +99,51 @@ export default {
   }
   .cache{
     position: absolute;
-    bottom: 40px;
+    bottom: 80px;
     left: 50%;
     transform: translateX(-50%);
     border: 2px solid #606266;
     background-color: #C0C4CC;
     z-index: 0;
+  }
+
+  .game-function{
+    position: absolute;
+    bottom: 20px;
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    justify-content: space-around;
+
+    .item {
+      width: 60px;
+      height: 40px;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      border-radius: 15px;
+      background-color: #C0C4CC;
+      text-shadow: -2px 2px 2px #606266,
+                  -2px 2px 2px #606266,
+                  -2px 2px 2px #606266,
+                  -2px 2px 2px #606266,
+                  -2px 2px 2px #606266,
+                  -2px 2px 2px #606266;
+      box-shadow: 0px 10px 0px 0px #606266;
+      transition: all .5s;
+
+      &:hover {
+        background-color: #e4e8f3;
+      }
+      &:active {
+        transform: translate(0,4px);
+        box-shadow: 0px 1px 0px 0px #606266;
+      }   
+    }
   }
 }
 </style>
