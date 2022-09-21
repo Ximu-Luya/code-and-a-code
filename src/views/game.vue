@@ -24,12 +24,10 @@
 
 <script>
 import Card from '@/components/card.vue'
-import CacheBox from '@/components/cacheBox.vue'
 import { mapState, mapMutations } from 'vuex'
 export default {
   components: {
     Card,
-    CacheBox
   },
   computed: {
     ...mapState(['allCards', 'options', 'boxPos']),
