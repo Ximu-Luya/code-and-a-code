@@ -172,8 +172,10 @@ export default createStore({
       if (targets.length === 3) {
         // 所有缓存堆中将要消除的相同卡牌
         const sameCard = state.allCards.filter(item => item.code === currentCard.code)
-        // 执行消除动画
-        sameCard.forEach(item => (item.disappearing = true))
+        // 执行消除动画，延时300ms等待卡牌移动进入缓存堆
+        setTimeout(() => {
+          sameCard.forEach(item => (item.disappearing = true))
+        }, 300);
         // 延时消除动画的时间后，从总卡牌数据中消除卡牌
         setTimeout(() => {
           commit('removeSameCard', currentCard)
