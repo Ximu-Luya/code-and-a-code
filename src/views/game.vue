@@ -9,12 +9,14 @@
       <div class="cache-box" :style="cacheBoxSize"></div>
     </div>
 
-    <div class="game-function" v-if="false">
-      <div class="item">
+    <div class="game-function">
+      <div class="item" @click="refreshDeck">
         <i class="el-icon-refresh"></i>
+        <span>重新打乱牌堆</span>
       </div>
-      <div class="item">
+      <div class="item" @click="moveToDeck">
         <i class="el-icon-upload2"></i>
+        <span>卡牌返回牌堆</span>
       </div>
     </div>
   </div>
@@ -54,7 +56,7 @@ export default {
     this.initDeck({groupCount: 3, perGroup: 3})
   },
   methods: {
-    ...mapMutations(['initDeck', 'initBoxPos']),
+    ...mapMutations(['initDeck', 'initBoxPos', 'refreshDeck', 'moveToDeck']),
     /**
      * 初始化页面各容器坐标
      */
@@ -76,7 +78,7 @@ export default {
           y: cacheBoxPos.y
         },
       })
-    }
+    },
   }
 }
 </script>
@@ -118,31 +120,20 @@ export default {
     justify-content: space-around;
 
     .item {
-      width: 60px;
-      height: 40px;
-      font-size: 24px;
+      padding: 10px;
+      font-size: 16px;
       display: flex;
       justify-content: center;
       align-items: center;
       color: #fff;
-      border-radius: 15px;
-      background-color: #C0C4CC;
-      text-shadow: -2px 2px 2px #606266,
-                  -2px 2px 2px #606266,
-                  -2px 2px 2px #606266,
-                  -2px 2px 2px #606266,
-                  -2px 2px 2px #606266,
-                  -2px 2px 2px #606266;
-      box-shadow: 0px 10px 0px 0px #606266;
-      transition: all .5s;
+      border-radius: 4px;
+      background-color: #606266;
+      box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+      cursor: pointer;
 
       &:hover {
-        background-color: #e4e8f3;
-      }
-      &:active {
-        transform: translate(0,4px);
-        box-shadow: 0px 1px 0px 0px #606266;
-      }   
+        opacity: 0.7;
+      } 
     }
   }
 }

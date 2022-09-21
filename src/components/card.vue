@@ -5,7 +5,6 @@
     @click="handleClick"
     :style="position"
   >
-    <!-- <img src="https://bpic.51yuansu.com/pic2/cover/00/43/53/5812dc60762fe_610.jpg?x-oss-process=image/sharpen,100" /> -->
     <div class="content"> {{cardData.code}} </div>
   </div>
 </template>
@@ -30,10 +29,9 @@ export default {
   methods: {
     ...mapActions(['saveInCache']),
     handleClick(){
-      if (this.cached) return null
+      if (this.cardData.cached) return null
 
       this.saveInCache(this.cardData)
-      this.cached = true
     }
   }
 }

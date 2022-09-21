@@ -78,6 +78,7 @@ export default createStore({
               y: getRandomInt(boxPos.deckBoxPos.top, boxPos.deckBoxPos.bottom - options.card.height),
             },
             disappearing: false,
+            cached: false
           })
         }
       }
@@ -94,8 +95,10 @@ export default createStore({
       const target = state.deck.findIndex(item => item.id === currentCard.id)
       if (target < 0) return alert('该卡牌不存在')
 
-      state.deck.splice(target, 1)[0]
+      state.deck.splice(target, 1)
       state.cache.push(currentCard)
+      // 设置缓存状态为true，使其不可继续点击
+      currentCard.cached = true
 
       currentCard.pos = {
         x: state.boxPos.cacheBoxPos.x + (state.cache.length - 1) * 50,
@@ -120,6 +123,36 @@ export default createStore({
         item.pos.x = state.boxPos.cacheBoxPos.x + index * 50
       })
     },
+    /**
+     * 重新排列牌堆中的卡牌
+     * @param state 
+     */
+    refreshDeck(state){
+      const { boxPos, options } = state
+      // 重新随机生成牌堆中所有卡牌的坐标
+      state.deck.forEach(item => {
+        item.pos.x = getRandomInt(boxPos.deckBoxPos.left, boxPos.deckBoxPos.right - options.card.width)
+        item.pos.y = getRandomInt(boxPos.deckBoxPos.top, boxPos.deckBoxPos.bottom - options.card.height)
+      })
+    },
+    /**
+     * 将缓存堆中的卡牌重新移入牌堆中
+     * @param state 
+     */
+    moveToDeck(state){
+      const { boxPos, options } = state
+      // 移除缓存堆中的所有卡牌
+      const toDeckCards = state.cache.splice(0, state.cache.length)
+      // 将移除的卡牌，重新生成其在牌堆中的坐标
+      toDeckCards.forEach(item => {
+        item.pos.x = getRandomInt(boxPos.deckBoxPos.left, boxPos.deckBoxPos.right - options.card.width)
+        item.pos.y = getRandomInt(boxPos.deckBoxPos.top, boxPos.deckBoxPos.bottom - options.card.height)
+        // 设置缓存状态为false
+        item.cached = false
+      })
+      // 将从缓存堆中移除的卡牌加入牌堆中
+      state.deck.push(...toDeckCards)
+    }
   },
   actions: {
     /**
