@@ -1,0 +1,25 @@
+[
+  {
+    "version": "0.1.1",
+    "update": "2022-09-22",
+    "changes": [
+      {
+        "type": "Feature",
+        "content": [
+          {
+            "title": "新增",
+            "description": "新增了重洗牌堆与卡牌返回牌堆功能"
+          },
+          {
+            "title": "新增",
+            "description": "新增了项目首页导航"
+          },
+          {
+            "title": "新增",
+            "description": "新增了项目更新日志及弹窗动画"
+          }
+        ]
+      }
+    ]
+  }
+]

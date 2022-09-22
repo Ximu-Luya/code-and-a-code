@@ -3,7 +3,9 @@
     <img class="title" src="../assets/title.png">
 
     <div class="start-game home-button" @click="startGame">开始游戏</div>
-    <div class="change-log home-button">更新日志</div>
+    <div class="change-log home-button" @click="openChangeLog">更新日志</div>
+
+    <change-log v-model:visible="logVisible"></change-log>
 
     <div class="copyright">
       Developed by @Ximu 
@@ -14,15 +16,23 @@
 
 <script>
 import packageConfig from "@/../package.json"
+import ChangeLog from '@/components/changeLog.vue';
 export default {
+  components: {
+    ChangeLog
+  },
   data(){
     return {
-      version: packageConfig.version
+      version: packageConfig.version,
+      logVisible: false
     }
   },
   methods: {
     startGame(){
       this.$router.push('/game')
+    },
+    openChangeLog(){
+      this.logVisible = true
     }
   }
 }
