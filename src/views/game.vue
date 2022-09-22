@@ -1,5 +1,6 @@
 <template>
   <div class="game">
+    <top-nav title="Game"></top-nav>
     <card v-for="item in allCards" :key="item" :card-data="item"></card>
     
     <div class="deck">
@@ -23,11 +24,13 @@
 </template>
 
 <script>
+import TopNav from '@/components/topNav.vue'
 import Card from '@/components/card.vue'
 import { mapState, mapMutations } from 'vuex'
 export default {
   components: {
     Card,
+    TopNav
   },
   computed: {
     ...mapState(['allCards', 'options', 'boxPos']),
@@ -66,7 +69,7 @@ export default {
       // 初始化缓存堆相对页面的坐标
       this.initBoxPos({
         deckBoxPos: {
-          top: 50,
+          top: 60,
           bottom: cacheBoxPos.y - 50,
           left: 50,
           right: pagePos.width - 50,
@@ -89,7 +92,7 @@ export default {
 
   .deck{
     position: absolute;
-    top: 40px;
+    top: 50px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 0;
