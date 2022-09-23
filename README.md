@@ -1,19 +1,15 @@
-# yanglegeyang
+# Malegema
 
-## Project setup
+## Introduce
+A small elimination game implemented with Vue, modeled on "Sheep and a Sheep". It is currently in the process of rapid iterative development. Multiple configurable items such as card content, number of cards, and number of cards required to eliminate.
+
+![GameShot](https://raw.githubusercontent.com/Ximu-Luya/malegema/master/public/static/game_screenshot.png)
+
+## Install, Run and Build
 ```
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
-```
-
-### Compiles and minifies for production
-```
 npm run build
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Contact Me
+Contact me via email(794876939@qq.com), or submit an issue directly in this repository.
