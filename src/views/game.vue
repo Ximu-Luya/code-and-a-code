@@ -1,6 +1,10 @@
 <template>
   <div class="game">
-    <top-nav title="Game"></top-nav>
+    <top-nav title="Game">
+      <template #extra>
+        <el-button>游戏设置</el-button>
+      </template>
+    </top-nav>
     <card v-for="item in allCards" :key="item" :card-data="item"></card>
     
     <div class="deck">
@@ -69,7 +73,7 @@ export default {
       // 初始化缓存堆相对页面的坐标
       this.initBoxPos({
         deckBoxPos: {
-          top: 60,
+          top: 70,
           bottom: cacheBoxPos.y - 50,
           left: 50,
           right: pagePos.width - 50,
@@ -92,7 +96,7 @@ export default {
 
   .deck{
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 0;

@@ -8,7 +8,7 @@
     <change-log v-model:visible="logVisible"></change-log>
 
     <div class="copyright">
-      Developed by <a href="https://github.com/Ximu-Luya" target="_blank">@Ximu-Luya</a> 
+      Developed by <el-link href="https://github.com/Ximu-Luya" target="_blank">@Ximu-Luya</el-link> 
       Ver {{version}}
     </div>
   </div>
@@ -91,6 +91,12 @@ export default {
     position: absolute;
     right: 0; bottom: 0;
     padding: 20px;
+    display: flex;
+    align-items: center;
+
+    >* {
+      padding: 0 5px;
+    }
   }
 }
 </style>

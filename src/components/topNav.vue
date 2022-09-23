@@ -4,6 +4,11 @@
       <template #content>
         <span class="text-large font-600 mr-3"> {{ title }} </span>
       </template>
+      <template #extra>
+        <div class="flex items-center">
+          <slot name="extra"></slot>
+        </div>
+      </template>
     </el-page-header>
   </div>
 </template>
@@ -22,10 +27,14 @@ export default {
 <style lang="scss" scoped>
 .top-nav {
   width: 100%;
-  height: 50px;
-  padding: 0 10px;
+  padding: 0 20px;
+  height: 60px;
   display: flex;
   align-items: center;
+
+  >* {
+    flex-grow: 1;
+  }
 }
 </style>
 <style>
