@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import CardIconData from '@/assets/card.icon.json'
 
 // 生产随机数
 function getRandomInt(min, max) {
@@ -32,15 +33,23 @@ export default createStore({
     options: {
       // 卡牌大小
       card: {
-        width: 50,
-        height: 60
+        width: 60,
+        height: 70
       },
       // 缓存堆最大容量
       cacheMax: 6,
-      // 每组相同卡片数量
-      perGroup: 3,
-      // 卡牌组数
-      groupCount: 20,
+      group: {
+        name: 'FrontEnd',
+        // 多少张牌可以消除
+        removeCount: 3,
+        /**
+         * 每组卡牌数为消除数的多少倍
+         * 总相同卡牌数 = removeCount * rmCountMultiple
+         * 即3张牌可以消除，倍数为2，则牌堆中每组相同的卡牌有2*3=6张
+         * 组数为卡片icon数量
+         */
+        rmCountMultiple: 2,
+      }
     },
   },
   getters: {},
@@ -64,12 +73,16 @@ export default createStore({
      */
     initDeck(state) {
       const { boxPos, options } = state
+      // 卡牌组数 = 卡牌Icon数组长度
+      const groupCount = CardIconData[options.group.name].length
+      // 每组卡牌数 = 卡牌消除数 * 消除数倍数
+      const perGroup = options.group.removeCount * options.group.rmCountMultiple
       state.allCards = []
       state.deck = []
       state.cache = []
 
-      for (let cardCode = 1, id = 0; cardCode <= options.groupCount; cardCode++) {
-        for (let cardCount = 0; cardCount < options.perGroup; cardCount++) {
+      for (let cardCode = 0, id = 0; cardCode < groupCount; cardCode++) {
+        for (let cardCount = 0; cardCount < perGroup; cardCount++) {
           state.allCards.push({
             id: id++,
             code: cardCode,
@@ -101,7 +114,7 @@ export default createStore({
       currentCard.cached = true
 
       currentCard.pos = {
-        x: state.boxPos.cacheBoxPos.x + (state.cache.length - 1) * 50,
+        x: state.boxPos.cacheBoxPos.x + (state.cache.length - 1) * state.options.card.width,
         y: state.boxPos.cacheBoxPos.y,
       }
     },
@@ -120,7 +133,7 @@ export default createStore({
      */
     rerenderCacheBox(state) {
       state.cache.forEach((item, index) => {
-        item.pos.x = state.boxPos.cacheBoxPos.x + index * 50
+        item.pos.x = state.boxPos.cacheBoxPos.x + index * state.options.card.width
       })
     },
     /**

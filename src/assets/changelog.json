@@ -1,7 +1,7 @@
 [
   {
-    "version": "0.1.1",
-    "update": "2022-09-22",
+    "version": "0.2.0",
+    "update": "2022-09-23",
     "changes": [
       {
         "type": "Feature",
@@ -17,6 +17,18 @@
           {
             "title": "新增",
             "description": "新增了项目更新日志及弹窗动画"
+          },
+          {
+            "title": "新增",
+            "description": "新增了卡牌图片与名称配置"
+          },
+          {
+            "title": "新增",
+            "description": "现在可以配置 消除数(卡牌在缓存堆中达到多少张可以消除)"
+          },
+          {
+            "title": "修改",
+            "description": "卡牌的初始化过程由指定组数，改变为根据卡片Icon数量 * 消除数倍数"
           }
         ]
       }
