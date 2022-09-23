@@ -119,13 +119,24 @@ export default createStore({
       }
     },
     /**
-     * 消除总卡牌数据中相同的卡牌
+     * 消除缓存堆中Code相同的卡牌
      * @param state
-     * @param currentCard 卡牌数据
+     * @param sameCards 将要消除的卡牌数组
      */
-    removeSameCard(state, currentCard) {
-      state.cache = state.cache.filter(item => item.code !== currentCard.code)
-      state.allCards = state.allCards.filter(item => item.code !== currentCard.code)
+    removeSameCardInCache(state, sameCards) {
+      state.cache = state.cache.filter(item => {
+        return !sameCards.some(sameCard => sameCard.id === item.id)
+      })
+    },
+    /**
+     * 消除总卡牌数据中Code相同的卡牌
+     * @param state
+     * @param sameCards 将要消除的卡牌数组
+     */
+    removeSameCardInAll(state, sameCards) {
+      state.allCards = state.allCards.filter(item => {
+        return !sameCards.some(sameCard => sameCard.id === item.id)
+      })
     },
     /**
      * 重新计算缓存堆中卡牌的坐标
@@ -181,17 +192,19 @@ export default createStore({
 
       // 在缓存堆中寻找与当前卡牌code值相同的卡牌
       const targets = state.cache.filter(item => item.code === currentCard.code)
-      // 如果该卡牌在缓存堆中的数量达到3张
-      if (targets.length === 3) {
-        // 所有缓存堆中将要消除的相同卡牌
-        const sameCard = state.allCards.filter(item => item.code === currentCard.code)
+      // 如果该卡牌在缓存堆中的数量达到 设置中的消除数
+      if (targets.length === state.options.group.removeCount) {
+        // 获取所有缓存堆中将要消除的相同卡牌
+        const sameCards = state.cache.filter(item => item.code === currentCard.code)
+        // 先执行缓存堆中的卡牌消除，以防止在动画执行过程中继续添加卡牌导致游戏结束
+        commit('removeSameCardInCache', sameCards)
         // 执行消除动画，延时300ms等待卡牌移动进入缓存堆
         setTimeout(() => {
-          sameCard.forEach(item => (item.disappearing = true))
+          sameCards.forEach(item => (item.disappearing = true))
         }, 300);
-        // 延时消除动画的时间后，从总卡牌数据中消除卡牌
+        // 消除动画执行结束后，从总卡牌数据中消除卡牌
         setTimeout(() => {
-          commit('removeSameCard', currentCard)
+          commit('removeSameCardInAll', sameCards)
           // 重新计算缓存堆中剩余卡牌的坐标
           commit('rerenderCacheBox')
           // 总卡牌数量为0，游戏胜利
