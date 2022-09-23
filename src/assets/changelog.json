@@ -48,5 +48,20 @@
         ]
       }
     ]
+  },
+  {
+    "version": "0.1.0",
+    "update": "2022-09-22",
+    "changes": [
+      {
+        "type": "Feature",
+        "content": [
+          {
+            "title": "新增",
+            "description": "实现了核心玩法"
+          }
+        ]
+      }
+    ]
   }
 ]

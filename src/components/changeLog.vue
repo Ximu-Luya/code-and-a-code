@@ -83,9 +83,14 @@ export default {
 }
 .dialog {
   max-height: 70%;
+  height: 600px;
 }
 .el-dialog__body {
+  position: absolute;
+  top: 54px; bottom: 0;
+  width: 100%;
   padding-top: 0;
+  overflow: auto;
 }
 // 使element-plus对话框相对页面元素而非body
 .el-overlay {
