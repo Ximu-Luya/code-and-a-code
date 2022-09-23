@@ -1,4 +1,4 @@
-# Malegema
+# Code and a Code
 
 ## Introduce
 A small elimination game implemented with Vue, modeled on "Sheep and a Sheep". It is currently in the process of rapid iterative development. Multiple configurable items such as card content, number of cards, and number of cards required to eliminate.
