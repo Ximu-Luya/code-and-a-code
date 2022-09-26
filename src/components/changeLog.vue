@@ -1,14 +1,5 @@
 <template>
-  <el-dialog
-    v-model="visible"
-    @close="handleClose"
-    @open="handleOpen"
-    class="dialog animate__animated animate__zoomIn"
-    :class="{ 'animate__zoomOut': disappearing}"
-    width="70%"
-    center
-    title="更新日志"
-  >
+  <xm-dialog :visible="visible" title="更新日志" @close="$emit('update:visible', false)">
     <article class="markdown-body">
       <div
         v-for="logItem in logs"
@@ -27,27 +18,21 @@
         </template>
       </div>
     </article>
-  </el-dialog>
+  </xm-dialog>
 </template>
 
 <script>
 import ChangeLogData from '@/assets/changelog.json'
+import XmDialog from "./dialog.vue"
 export default {
+  components: {
+    XmDialog
+  },
+  emits: ['update:visible'],
   props: ['visible'],
   data() {
     return {
-      logs: ChangeLogData,
-      disappearing: false
-    }
-  },
-  methods: {
-    handleClose() {
-      this.$emit('update:visible', false)
-      this.disappearing = true
-    },
-    handleOpen() {
-      // 打开弹窗时取消消失动画以防止弹窗打开后马上关闭
-      this.disappearing = false
+      logs: ChangeLogData
     }
   },
 }
@@ -71,32 +56,6 @@ export default {
     font-weight: 600;
     line-height: 1.25;
     font-size: 1.25em;
-  }
-}
-</style>
-<style lang="scss">
-// 弹窗动画持续时间修改为0.3秒
-.animate__animated {
-  &.animate__zoomIn, &.animate__zoomOut {
-    --animate-duration: 0.3s;
-  }
-}
-.dialog {
-  max-height: 70%;
-  height: 600px;
-}
-.el-dialog__body {
-  position: absolute;
-  top: 54px; bottom: 0;
-  width: 100%;
-  padding-top: 0;
-  overflow: auto;
-}
-// 使element-plus对话框相对页面元素而非body
-.el-overlay {
-  position: absolute !important;
-  .el-overlay-dialog {
-    position: absolute !important;
   }
 }
 </style>
