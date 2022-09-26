@@ -7,7 +7,11 @@
   >
     <div class="content">
       <div class="img-box">
-        <img :src="CardIcon.FrontEnd[cardData.code].src" :alt="cardData.code">
+        <img
+          :src="CardIcon.FrontEnd[cardData.code].src"
+          :alt="cardData.code"
+          draggable="false"
+        >
       </div>
       <div class="name">{{CardIcon.FrontEnd[cardData.code].name}}</div>
     </div>
