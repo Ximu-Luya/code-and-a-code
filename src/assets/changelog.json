@@ -1,22 +1,7 @@
 [
   {
-    "version": "0.2.1",
-    "update": "2022-09-23",
-    "changes": [
-      {
-        "type": "Bug Fixes",
-        "content": [
-          {
-            "title": "修复",
-            "description": "修复了卡牌加入缓存堆过快时，可能除非游戏结束的问题"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "version": "0.2.0",
-    "update": "2022-09-22",
+    "update": "2022-09-25",
     "changes": [
       {
         "type": "Feature",
@@ -35,15 +20,28 @@
           },
           {
             "title": "新增",
-            "description": "新增了卡牌图片与名称配置"
+            "description": "新增了全局错误捕获与记录功能，用于错误上报与偶现错误排查"
           },
           {
             "title": "新增",
-            "description": "现在可以配置 消除数(卡牌在缓存堆中达到多少张可以消除)"
+            "description": "新增了卡牌图片与名称配置功能(代码控制)"
+          },
+          {
+            "title": "新增",
+            "description": "现在可以配置(代码控制) 消除数(卡牌在缓存堆中达到多少张可以消除)"
           },
           {
             "title": "修改",
-            "description": "卡牌的初始化过程由指定组数，改变为根据卡片Icon数量 * 消除数倍数"
+            "description": "卡牌的初始化过程由 指定组数，改变为 卡片Icon数量 * 消除数倍数"
+          }
+        ]
+      },
+      {
+        "type": "Bug Fixes",
+        "content": [
+          {
+            "title": "修复",
+            "description": "修复了卡牌加入缓存堆过快时，可能导致游戏结束的问题"
           }
         ]
       }

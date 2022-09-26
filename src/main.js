@@ -1,3 +1,4 @@
+import "./utils/global_error_catch.js"
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'

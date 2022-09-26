@@ -4,8 +4,10 @@
 
     <div class="start-game home-button" @click="startGame">开始游戏</div>
     <div class="change-log home-button" @click="openChangeLog">更新日志</div>
+    <div class="error-log home-button" @click="openErrorLog">错误日志</div>
 
-    <change-log v-model:visible="logVisible"></change-log>
+    <change-log v-model:visible="changeLogVisible"></change-log>
+    <error-log v-model:visible="errorLogVisible"></error-log>
 
     <div class="copyright">
       Developed by <el-link href="https://github.com/Ximu-Luya" target="_blank">@Ximu-Luya</el-link> 
@@ -17,14 +19,17 @@
 <script>
 import packageConfig from "@/../package.json"
 import ChangeLog from '@/components/changeLog.vue';
+import ErrorLog from "@/components/errorLog.vue";
 export default {
   components: {
-    ChangeLog
-  },
+    ChangeLog,
+    ErrorLog
+},
   data(){
     return {
       version: packageConfig.version,
-      logVisible: false
+      changeLogVisible: false,
+      errorLogVisible: false
     }
   },
   methods: {
@@ -32,7 +37,10 @@ export default {
       this.$router.push('/game')
     },
     openChangeLog(){
-      this.logVisible = true
+      this.changeLogVisible = true
+    },
+    openErrorLog(){
+      this.errorLogVisible = true
     }
   }
 }
@@ -84,6 +92,14 @@ export default {
     background: -webkit-linear-gradient(top,#e0b956,#bb8231);
     &:active {
       background: -webkit-linear-gradient(top,#bb8231,#bb8231);
+    }
+  }
+  .error-log {
+    border: 1px solid #ef8585;
+    box-shadow: 0 0 0 1px #c45656, 1px 5px 0 #c45656, -1px 5px 0 #c45656, 0 6px 8px rgb(0 0 0 / 80%);
+    background: -webkit-linear-gradient(top,#ef8585, #F56C6C);
+    &:active {
+      background: -webkit-linear-gradient(top,#F56C6C,#F56C6C);
     }
   }
 
