@@ -1,11 +1,13 @@
 import { createStore } from 'vuex'
 import CardIconData from '@/assets/card.icon.json'
+import _ from "lodash"
 
-// 生产随机数
-function getRandomInt(min, max) {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min)) + min //不含最大值，含最小值
+function delay(time) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, time)
+  })
 }
 
 export default createStore({
@@ -17,7 +19,7 @@ export default createStore({
     // 缓存堆
     cache: [],
     // 页面容器坐标
-    boxPos: {
+    boxConfig: {
       deckBoxPos: {
         top: 0,
         bottom: 0,
@@ -28,6 +30,10 @@ export default createStore({
         x: 0,
         y: 0,
       },
+      deckGrid: {
+        row: 0,
+        column: 0
+      }
     },
     // 可选项
     options: {
@@ -55,24 +61,44 @@ export default createStore({
   getters: {},
   mutations: {
     /**
-     * 初始化缓存堆坐标
+     * 初始化页面容器坐标
      * @param state
      * @param pos 牌堆与缓存堆坐标
      */
-    initBoxPos(state, pos) {
-      state.boxPos.deckBoxPos.top = pos.deckBoxPos.top
-      state.boxPos.deckBoxPos.bottom = pos.deckBoxPos.bottom
-      state.boxPos.deckBoxPos.left = pos.deckBoxPos.left
-      state.boxPos.deckBoxPos.right = pos.deckBoxPos.right
-      state.boxPos.cacheBoxPos.x = pos.cacheBoxPos.x
-      state.boxPos.cacheBoxPos.y = pos.cacheBoxPos.y
+    initBoxPos(state, { deckBoxPos, cacheBoxPos }) {
+      const { card } = state.options
+
+      // 以卡牌长宽为一个方格，计算整数个方格划分牌堆后的实际牌堆偏移量
+      const deckHorizontalOffset = ((deckBoxPos.right - deckBoxPos.left) % card.width) / 2
+      const deckVerticalOffset = ((deckBoxPos.bottom - deckBoxPos.top) % card.height) / 2
+      
+      // 计算方格后的牌堆坐标
+      const realDeckPos = {
+        top: deckBoxPos.top + deckVerticalOffset,
+        bottom: deckBoxPos.bottom - deckVerticalOffset,
+        left: deckBoxPos.left + deckHorizontalOffset,
+        right: deckBoxPos.right - deckHorizontalOffset,
+      }
+      // 牌堆长宽参数
+      realDeckPos.width = realDeckPos.right - realDeckPos.left
+      realDeckPos.height = realDeckPos.bottom - realDeckPos.top
+
+      state.boxConfig.deckBoxPos = realDeckPos
+
+      // 牌堆网格参数
+      state.boxConfig.deckGrid.row = realDeckPos.width / card.width
+      state.boxConfig.deckGrid.column = realDeckPos.height / card.height
+
+      // 缓存堆坐标
+      state.boxConfig.cacheBoxPos.x = cacheBoxPos.x
+      state.boxConfig.cacheBoxPos.y = cacheBoxPos.y
     },
     /**
      * 初始化牌堆
      * @param state
      */
-    initDeck(state) {
-      const { boxPos, options } = state
+    initCardData(state) {
+      const { boxConfig, options } = state
       // 卡牌组数 = 卡牌Icon数组长度
       const groupCount = CardIconData[options.group.name].length
       // 每组卡牌数 = 卡牌消除数 * 消除数倍数
@@ -80,6 +106,11 @@ export default createStore({
       state.allCards = []
       state.deck = []
       state.cache = []
+      // 卡牌初始在牌堆中央
+      const deckBoxCenter = {
+        x: boxConfig.deckBoxPos.left + (boxConfig.deckBoxPos.right - boxConfig.deckBoxPos.left - options.card.width) / 2,
+        y: boxConfig.deckBoxPos.top + (boxConfig.deckBoxPos.bottom - boxConfig.deckBoxPos.top - options.card.height) / 2
+      }
 
       for (let cardCode = 0, id = 0; cardCode < groupCount; cardCode++) {
         for (let cardCount = 0; cardCount < perGroup; cardCount++) {
@@ -87,17 +118,32 @@ export default createStore({
             id: id++,
             code: cardCode,
             pos: {
-              x: getRandomInt(boxPos.deckBoxPos.left, boxPos.deckBoxPos.right - options.card.width),
-              y: getRandomInt(boxPos.deckBoxPos.top, boxPos.deckBoxPos.bottom - options.card.height),
+              x: deckBoxCenter.x,
+              y: deckBoxCenter.y,
             },
             disappearing: false,
-            cached: false
+            cached: false,
           })
         }
       }
 
       // 所有卡牌初始在牌堆中
       state.deck = state.allCards.map(item => item)
+    },
+    /**
+     * 随机设置卡牌位置
+     * @param state 
+     */
+    randomCardPos(state, currentCard){
+      const { deckGrid, deckBoxPos } = state.boxConfig
+      const { card } = state.options
+      const rowOffset = _.random(deckGrid.row - 1)
+      const columnOffset = _.random(deckGrid.column - 1)
+
+      currentCard.pos = {
+        x: deckBoxPos.left + rowOffset * card.width,
+        y: deckBoxPos.top + columnOffset * card.height
+      }
     },
     /**
      * 卡牌从牌堆移入缓存堆
@@ -114,8 +160,8 @@ export default createStore({
       currentCard.cached = true
 
       currentCard.pos = {
-        x: state.boxPos.cacheBoxPos.x + (state.cache.length - 1) * state.options.card.width,
-        y: state.boxPos.cacheBoxPos.y,
+        x: state.boxConfig.cacheBoxPos.x + (state.cache.length - 1) * state.options.card.width,
+        y: state.boxConfig.cacheBoxPos.y,
       }
     },
     /**
@@ -144,47 +190,28 @@ export default createStore({
      */
     rerenderCacheBox(state) {
       state.cache.forEach((item, index) => {
-        item.pos.x = state.boxPos.cacheBoxPos.x + index * state.options.card.width
+        item.pos.x = state.boxConfig.cacheBoxPos.x + index * state.options.card.width
       })
     },
-    /**
-     * 重新排列牌堆中的卡牌
-     * @param state 
-     */
-    refreshDeck(state){
-      const { boxPos, options } = state
-      // 重新随机生成牌堆中所有卡牌的坐标
-      state.deck.forEach(item => {
-        item.pos.x = getRandomInt(boxPos.deckBoxPos.left, boxPos.deckBoxPos.right - options.card.width)
-        item.pos.y = getRandomInt(boxPos.deckBoxPos.top, boxPos.deckBoxPos.bottom - options.card.height)
-      })
-    },
-    /**
-     * 将缓存堆中的卡牌重新移入牌堆中
-     * @param state 
-     */
-    moveToDeck(state){
-      const { boxPos, options } = state
-      // 移除缓存堆中的所有卡牌
-      const toDeckCards = state.cache.splice(0, state.cache.length)
-      // 将移除的卡牌，重新生成其在牌堆中的坐标
-      toDeckCards.forEach(item => {
-        item.pos.x = getRandomInt(boxPos.deckBoxPos.left, boxPos.deckBoxPos.right - options.card.width)
-        item.pos.y = getRandomInt(boxPos.deckBoxPos.top, boxPos.deckBoxPos.bottom - options.card.height)
-        // 设置缓存状态为false
-        item.cached = false
-      })
-      // 将从缓存堆中移除的卡牌加入牌堆中
-      state.deck.push(...toDeckCards)
-    }
   },
   actions: {
+    /**
+     * 初始化游戏
+     * @param context 
+     */
+    async initGame({ state, commit }) {
+      commit('initCardData')
+      for(let i=0; i<state.deck.length; i++){
+        await delay(10)
+        commit('randomCardPos', state.deck[i])
+      }
+    },
     /**
      * 点击卡牌，移入缓存堆，进行后续决策
      * @param context
      * @param currentCard 当前卡牌数据
      */
-    async saveInCache({ state, commit }, currentCard) {
+    async saveInCache({ state, commit, dispatch }, currentCard) {
       // 缓存堆达到数量上限时，不允许继续添加卡牌
       if(state.cache.length === state.options.cacheMax) return
       // 卡牌移入缓存堆
@@ -210,7 +237,7 @@ export default createStore({
           // 总卡牌数量为0，游戏胜利
           if (state.allCards.length === 0) {
             alert('游戏胜利，恭喜你')
-            commit('initDeck')
+            dispatch('initGame')
           }
         }, 1000)
       } else {
@@ -218,10 +245,37 @@ export default createStore({
         if(state.cache.length === state.options.cacheMax) {
           setTimeout(() => {
             alert('游戏结束，点击确定重新开始')
-            commit('initDeck')
+            dispatch('initGame')
           }, 310);
           return 
         }
+      }
+    },
+    /**
+     * 将缓存堆中的所有卡牌重新移入牌堆中
+     * @param state 
+     */
+    moveAllToDeck({ state, commit }){
+      // 移除缓存堆中的所有卡牌
+      const toDeckCards = state.cache.splice(0, state.cache.length)
+      // 将移除的卡牌，重新生成其在牌堆中的坐标
+      toDeckCards.forEach(item => {
+        commit('randomCardPos', item)
+        // 设置缓存状态为false
+        item.cached = false
+      })
+      // 将从缓存堆中移除的卡牌加入牌堆中
+      state.deck.push(...toDeckCards)
+    },
+    /**
+     * 重新排列牌堆中的卡牌
+     * @param state 
+     */
+    async refreshDeck({ state, commit}){
+      // 重新随机生成牌堆中所有卡牌的坐标
+      for(let i=0; i<state.deck.length; i++){
+        await delay(10)
+        commit('randomCardPos', state.deck[i])
       }
     },
   },

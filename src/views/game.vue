@@ -7,11 +7,11 @@
     </top-nav>
     <card v-for="item in allCards" :key="item" :card-data="item"></card>
     
-    <div class="deck">
-      <div class="deck-box" :style="deckBoxSize"></div>
+    <div class="deck" :style="deckBoxPos">
+      <div class="border"></div>
     </div>
-    <div class="cache">
-      <div class="cache-box" :style="cacheBoxSize"></div>
+    <div class="cache" :style="cacheBoxSize">
+      <div class="border" ></div>
     </div>
 
     <div class="game-function">
@@ -19,7 +19,7 @@
         <i class="el-icon-refresh"></i>
         <span>重新打乱牌堆</span>
       </div>
-      <div class="item" @click="moveToDeck">
+      <div class="item" @click="moveAllToDeck">
         <i class="el-icon-upload2"></i>
         <span>卡牌返回牌堆</span>
       </div>
@@ -30,20 +30,22 @@
 <script>
 import TopNav from '@/components/topNav.vue'
 import Card from '@/components/card.vue'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 export default {
   components: {
     Card,
     TopNav
   },
   computed: {
-    ...mapState(['allCards', 'options', 'boxPos']),
+    ...mapState(['allCards', 'options', 'boxConfig']),
     // 牌堆尺寸
-    deckBoxSize(){
-      const { deckBoxPos } = this.boxPos
+    deckBoxPos(){
+      const { deckBoxPos } = this.boxConfig
       return {
-        width: `${deckBoxPos.right - deckBoxPos.left}px`,
-        height: `${deckBoxPos.bottom - deckBoxPos.top}px`
+        left: `${deckBoxPos.left}px`,
+        top: `${deckBoxPos.top}px`,
+        width: `${deckBoxPos.width}px`,
+        height: `${deckBoxPos.height}px`,
       }
     },
     // 缓存堆尺寸
@@ -58,17 +60,18 @@ export default {
   mounted(){
     this.initPos()
     // 初始化牌堆
-    this.initDeck({groupCount: 3, perGroup: 3})
+    this.initGame()
   },
   methods: {
-    ...mapMutations(['initDeck', 'initBoxPos', 'refreshDeck', 'moveToDeck']),
+    ...mapMutations(['initBoxPos']),
+    ...mapActions(['initGame', 'moveAllToDeck', 'refreshDeck']),
     /**
      * 初始化页面各容器坐标
      */
     initPos(){
       // 获取缓存堆与页面的坐标
       const pagePos = document.querySelector(".game").getBoundingClientRect()
-      const cacheBoxPos = document.querySelector(".cache-box").getBoundingClientRect()
+      const cacheBoxPos = document.querySelector(".cache").getBoundingClientRect()
 
       // 初始化缓存堆相对页面的坐标
       this.initBoxPos({
@@ -96,22 +99,37 @@ export default {
 
   .deck{
     position: absolute;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
     z-index: 0;
-    padding: 10px;
-    
-    border: 2px solid #606266;
+
+    .border {
+      box-sizing: content-box;
+      height: calc(100% + 20px);
+      width: calc(100% + 20px);
+      position: relative;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border: 2px solid #606266;
+    }
   }
   .cache{
     position: absolute;
     bottom: 80px;
     left: 50%;
     transform: translateX(-50%);
-    border: 2px solid #606266;
-    background-color: #C0C4CC;
     z-index: 0;
+
+    .border {
+      box-sizing: content-box;
+      height: calc(100% + 10px);
+      width: calc(100% + 10px);
+      position: relative;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border: 2px solid #606266;
+      background-color: #c0c4cc;
+    }
   }
 
   .game-function{
