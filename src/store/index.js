@@ -127,6 +127,7 @@ export default createStore({
         }
       }
 
+      state.allCards = _.shuffle(state.allCards)
       // 所有卡牌初始在牌堆中
       state.deck = state.allCards.map(item => item)
     },
