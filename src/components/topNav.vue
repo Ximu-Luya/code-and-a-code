@@ -18,7 +18,7 @@ export default {
   props: ['title'],
   methods: {
     handleBack() {
-      this.$router.back()
+      this.$router.replace('/home')
     },
   },
 }

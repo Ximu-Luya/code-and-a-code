@@ -1,5 +1,5 @@
 <template>
-  <xm-dialog :visible="visible" title="未上报错误日志" @close="$emit('update:visible', false)">
+  <xm-dialog :visible="visible" title="未上报的错误日志" @close="$emit('update:visible', false)">
     <!-- <el-button type="primary" @click="handleGenerator" v-if="true">生成</el-button> -->
 
     <template v-if="logs.length">
