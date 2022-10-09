@@ -15,6 +15,7 @@
       </div>
       <div class="name">{{CardIcon.FrontEnd[cardData.code].name}}</div>
     </div>
+    <div class="mask" v-if="cardData.isCover"></div>
   </div>
 </template>
 
@@ -33,8 +34,7 @@ export default {
     ...mapState(['options']),
     style(){
       return {
-        left: `${this.cardData.pos.x}px`,
-        top: `${this.cardData.pos.y}px`,
+        translate: `${this.cardData.pos.x}px ${this.cardData.pos.y}px`,
         width: `${this.options.card.width}px`,
         height: `${this.options.card.height}px`
       }
@@ -44,6 +44,7 @@ export default {
     ...mapActions(['saveInCache']),
     handleClick(){
       if (this.cardData.cached) return null
+      if (this.cardData.isCover) return null
 
       this.saveInCache(this.cardData)
     },
@@ -54,6 +55,8 @@ export default {
 <style lang="scss" scoped>
 .card-item{
   position: absolute;
+  // translate原点
+  left: 0; top: 0;
 
   border-radius: 4px;
   border: 1px solid #ebeef5;
@@ -104,6 +107,18 @@ export default {
       line-height: 16px;
       height: 16px;
     }
+  }
+
+  // 卡牌被覆盖的遮罩
+  .mask{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0; top: 0;
+    border-radius: 4px;
+    border: 1px solid #ebeef5;
+    background-color: black;
+    opacity: 0.6;
   }
 }
 </style>

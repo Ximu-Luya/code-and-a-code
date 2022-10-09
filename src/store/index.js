@@ -20,19 +20,27 @@ export default createStore({
     cache: [],
     // 页面容器坐标
     boxConfig: {
+      // 牌堆四边位置
       deckBoxPos: {
         top: 0,
         bottom: 0,
         left: 0,
         right: 0,
       },
+      // 缓存堆坐标
       cacheBoxPos: {
         x: 0,
         y: 0,
       },
+      // 牌堆网格信息
       deckGrid: {
         row: 0,
         column: 0
+      },
+      // 牌堆中央坐标
+      deckBoxCenter: {
+        x: 0,
+        y: 0
       }
     },
     // 可选项
@@ -92,6 +100,12 @@ export default createStore({
       // 缓存堆坐标
       state.boxConfig.cacheBoxPos.x = cacheBoxPos.x
       state.boxConfig.cacheBoxPos.y = cacheBoxPos.y
+
+      // 牌堆中央坐标
+      state.boxConfig.deckBoxCenter = {
+        x: realDeckPos.left + (realDeckPos.right - realDeckPos.left - card.width) / 2,
+        y: realDeckPos.top + (realDeckPos.bottom - realDeckPos.top - card.height) / 2
+      }
     },
     /**
      * 初始化牌堆
@@ -103,14 +117,12 @@ export default createStore({
       const groupCount = CardIconData[options.group.name].length
       // 每组卡牌数 = 卡牌消除数 * 消除数倍数
       const perGroup = options.group.removeCount * options.group.rmCountMultiple
+      // 初始化元数据、牌堆、缓存堆
       state.allCards = []
       state.deck = []
       state.cache = []
       // 卡牌初始在牌堆中央
-      const deckBoxCenter = {
-        x: boxConfig.deckBoxPos.left + (boxConfig.deckBoxPos.right - boxConfig.deckBoxPos.left - options.card.width) / 2,
-        y: boxConfig.deckBoxPos.top + (boxConfig.deckBoxPos.bottom - boxConfig.deckBoxPos.top - options.card.height) / 2
-      }
+      const deckBoxCenter = boxConfig.deckBoxCenter
 
       for (let cardCode = 0, id = 0; cardCode < groupCount; cardCode++) {
         for (let cardCount = 0; cardCount < perGroup; cardCount++) {
@@ -122,11 +134,13 @@ export default createStore({
               y: deckBoxCenter.y,
             },
             disappearing: false,
-            cached: false,
+            isCover: false,
+            cached: false
           })
         }
       }
 
+      // 打乱生成的顺序卡牌数组
       state.allCards = _.shuffle(state.allCards)
       // 所有卡牌初始在牌堆中
       state.deck = state.allCards.map(item => item)
@@ -138,12 +152,63 @@ export default createStore({
     randomCardPos(state, currentCard){
       const { deckGrid, deckBoxPos } = state.boxConfig
       const { card } = state.options
-      const rowOffset = _.random(deckGrid.row - 1)
-      const columnOffset = _.random(deckGrid.column - 1)
+      // 随机水平与垂直网格偏移
+      const rowGridOffset = _.random(deckGrid.row - 1)
+      const columnGridOffset = _.random(deckGrid.column - 1)
+      // 随机水平与垂直卡牌内偏移
+      let rowOffset, columnOffset
+      do {
+        rowOffset = _.random(-1, 1) * card.width / 2
+        columnOffset = _.random(-1 , 1) * card.height / 2
+      } while (
+        (rowGridOffset === 0 && rowOffset < 0) ||
+        (columnGridOffset === 0 && columnOffset < 0) ||
+        (rowGridOffset === deckGrid.row - 1 && rowOffset > 0) ||
+        (columnGridOffset === deckGrid.row - 1 && columnOffset > 0)
+      )
 
+      // 根据网格偏移与卡牌内偏移计算随机后的卡牌位置
       currentCard.pos = {
-        x: deckBoxPos.left + rowOffset * card.width,
-        y: deckBoxPos.top + columnOffset * card.height
+        x: deckBoxPos.left + rowGridOffset * card.width + rowOffset,
+        y: deckBoxPos.top + columnGridOffset * card.height + columnOffset
+      }
+    },
+    /**
+     * 计算牌堆中剩余卡牌覆盖情况
+     * @param state 
+     */
+    checkCardCover(state){
+      for(let i=0; i<state.deck.length; i++){
+        // 默认所有卡牌初始状态为未覆盖
+        state.deck[i].isCover = false
+        for(let j=i+1; j<state.deck.length; j++){
+          /**
+           * 前提：卡牌通过数组v-for渲染，数组排序在后的卡牌，dom顺序也在后，
+           * dom顺序在后的元素会覆盖在前的元素。
+           * 规则：当前卡牌只与其牌堆数组内顺序之后的卡牌比较，因为只有顺序之后的卡牌才可能覆盖它；
+           * 只要找到其中一个之后的卡牌与其相交，则卡牌会被覆盖，不需要再继续比较。
+           */
+          if(isIntersect(state.deck[i].pos, state.deck[j].pos)){
+            state.deck[i].isCover = true
+            break
+          }
+        }
+      }
+      
+      /**
+       * 检查两个卡牌是否相交
+       * @param {Object} pos1 当前被检查是否被覆盖的卡牌
+       * @param {number} pos1.x 
+       * @param {number} pos1.y 
+       * @param {Object} pos2 当前被检查卡牌顺序之后的卡牌
+       * @param {number} pos2.x 
+       * @param {number} pos2.y 
+       * @returns Boolean 是否被覆盖，true - 是，false - 否
+       */
+      function isIntersect(pos1, pos2){
+        const { card } = state.options
+        // 两卡牌的 x 与 y 左边之差 都小于 卡牌的宽与高，则卡牌相交
+        return Math.abs(pos1.x - pos2.x) < card.width && Math.abs(pos1.y - pos2.y) < card.height
       }
     },
     /**
@@ -160,6 +225,7 @@ export default createStore({
       // 设置缓存状态为true，使其不可继续点击
       currentCard.cached = true
 
+      // 卡牌位置移动到缓存堆
       currentCard.pos = {
         x: state.boxConfig.cacheBoxPos.x + (state.cache.length - 1) * state.options.card.width,
         y: state.boxConfig.cacheBoxPos.y,
@@ -206,6 +272,9 @@ export default createStore({
         await delay(10)
         commit('randomCardPos', state.deck[i])
       }
+      // 计算牌堆内卡牌覆盖关系
+      await delay(300)
+      commit('checkCardCover')
     },
     /**
      * 点击卡牌，移入缓存堆，进行后续决策
@@ -217,6 +286,9 @@ export default createStore({
       if(state.cache.length === state.options.cacheMax) return
       // 卡牌移入缓存堆
       commit('moveToCache', currentCard)
+      // 计算牌堆内卡牌覆盖关系
+      await delay(300)
+      commit('checkCardCover')
 
       // 在缓存堆中寻找与当前卡牌code值相同的卡牌
       const targets = state.cache.filter(item => item.code === currentCard.code)
@@ -226,10 +298,7 @@ export default createStore({
         const sameCards = state.cache.filter(item => item.code === currentCard.code)
         // 先执行缓存堆中的卡牌消除，以防止在动画执行过程中继续添加卡牌导致游戏结束
         commit('removeSameCardInCache', sameCards)
-        // 执行消除动画，延时300ms等待卡牌移动进入缓存堆
-        setTimeout(() => {
-          sameCards.forEach(item => (item.disappearing = true))
-        }, 300);
+        sameCards.forEach(item => (item.disappearing = true))
         // 消除动画执行结束后，从总卡牌数据中消除卡牌
         setTimeout(() => {
           commit('removeSameCardInAll', sameCards)
@@ -256,7 +325,7 @@ export default createStore({
      * 将缓存堆中的所有卡牌重新移入牌堆中
      * @param state 
      */
-    moveAllToDeck({ state, commit }){
+    async moveAllToDeck({ state, commit }){
       // 移除缓存堆中的所有卡牌
       const toDeckCards = state.cache.splice(0, state.cache.length)
       // 将移除的卡牌，重新生成其在牌堆中的坐标
@@ -267,6 +336,9 @@ export default createStore({
       })
       // 将从缓存堆中移除的卡牌加入牌堆中
       state.deck.push(...toDeckCards)
+      // 计算牌堆内卡牌覆盖关系
+      await delay(300)
+      commit('checkCardCover')
     },
     /**
      * 重新排列牌堆中的卡牌
@@ -275,9 +347,17 @@ export default createStore({
     async refreshDeck({ state, commit}){
       // 重新随机生成牌堆中所有卡牌的坐标
       for(let i=0; i<state.deck.length; i++){
+        state.deck[i].pos = state.boxConfig.deckBoxCenter
+        state.deck[i].isCover = false
+      }
+      // 重新随机生成牌堆中所有卡牌的坐标
+      for(let i=0; i<state.deck.length; i++){
         await delay(10)
         commit('randomCardPos', state.deck[i])
       }
+      // 计算牌堆内卡牌覆盖关系
+      await delay(300)
+      commit('checkCardCover')
     },
   },
   modules: {},
