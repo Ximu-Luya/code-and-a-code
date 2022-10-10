@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <img class="title" src="/static/title.png">
+    <img class="title" src="static/title.png">
 
     <div class="start-game home-button" @click="startGame">开始游戏</div>
     <div class="change-log home-button" @click="openChangeLog">更新日志</div>
