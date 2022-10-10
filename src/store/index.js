@@ -47,8 +47,8 @@ export default createStore({
     options: {
       // 卡牌大小
       card: {
-        width: 70,
-        height: 80
+        width: 50,
+        height: 50
       },
       // 缓存堆最大容量
       cacheMax: 6,

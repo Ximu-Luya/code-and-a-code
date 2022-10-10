@@ -12,11 +12,10 @@
       <div class="img-box">
         <img
           :src="CardIcon.FrontEnd[cardData.code].src"
-          :alt="cardData.code"
+          :alt="`${CardIcon.FrontEnd[cardData.code].name}[${cardData.code}]`"
           draggable="false"
         >
       </div>
-      <div class="name">{{CardIcon.FrontEnd[cardData.code].name}}</div>
     </div>
     <div class="mask" v-if="cardData.isCover"></div>
   </div>
@@ -91,27 +90,17 @@ export default {
     position: relative;
 
     .img-box {
-      position: absolute;
-      top: 5px; bottom: 20px;
+      height: 100%;
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
 
       img {
-        max-width: 100%;
-        max-height: 100%;
+        max-width: 90%;
+        max-height: 90%;
         object-fit: scale-down;
       }
-    }
-
-    .name {
-      position: absolute;
-      text-align: center;
-      bottom: 3px;
-      width: 100%;
-      line-height: 16px;
-      height: 16px;
     }
   }
 
