@@ -2,7 +2,7 @@
   <div
     class="card-item layout-center box-shadow"
     :class="{
-      'animate__animated animate__bounceOut': cardData.disappearing,
+      'hide': cardData.disappearing,
       'border': !cardData.isCover
     }"
     @click="handleClick"
@@ -76,6 +76,10 @@ export default {
 
   &.border {
     border: 1px solid #ebeef5;
+  }
+
+  &.hide {
+    opacity: 0;
   }
 
   // 卡片内部布局
