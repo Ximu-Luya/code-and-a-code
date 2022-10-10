@@ -17,7 +17,10 @@
         >
       </div>
     </div>
-    <div class="mask" v-if="cardData.isCover"></div>
+    <div
+      class="mask"
+      :class="{'covered': cardData.isCover, 'show': !cardData.isCover}"
+    ></div>
   </div>
 </template>
 
@@ -111,7 +114,16 @@ export default {
     position: absolute;
     left: 0; top: 0;
     border-radius: 4px;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: #000;
+    transition: .3s;
+
+    &.covered{
+      opacity: 0.6;
+    }
+
+    &.show {
+      opacity: 0;
+    }
   }
 }
 </style>
