@@ -1,7 +1,10 @@
 <template>
   <div
     class="card-item layout-center box-shadow"
-    :class="{ 'animate__animated animate__bounceOut': cardData.disappearing}"
+    :class="{
+      'animate__animated animate__bounceOut': cardData.disappearing,
+      'border': !cardData.isCover
+    }"
     @click="handleClick"
     :style="style"
   >
@@ -59,7 +62,6 @@ export default {
   left: 0; top: 0;
 
   border-radius: 4px;
-  border: 1px solid #ebeef5;
   background-color: #fff;
 
   transition: .3s;
@@ -68,6 +70,10 @@ export default {
   // 卡片阴影
   &.box-shadow {
     box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  }
+
+  &.border {
+    border: 1px solid #ebeef5;
   }
 
   // 卡片内部布局
@@ -116,9 +122,7 @@ export default {
     position: absolute;
     left: 0; top: 0;
     border-radius: 4px;
-    border: 1px solid #ebeef5;
-    background-color: black;
-    opacity: 0.6;
+    background-color: rgba(0, 0, 0, 0.6);
   }
 }
 </style>

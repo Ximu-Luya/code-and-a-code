@@ -24,6 +24,9 @@
         <span>卡牌返回牌堆</span>
       </div>
     </div>
+
+    <!-- 游戏锁定遮罩，防止玩家在游戏动画进行时操作 -->
+    <div class="game-lock-mask" v-if="gameLocked"></div>
   </div>
 </template>
 
@@ -37,7 +40,7 @@ export default {
     TopNav
   },
   computed: {
-    ...mapState(['allCards', 'options', 'boxConfig']),
+    ...mapState(['allCards', 'options', 'boxConfig', 'gameLocked']),
     // 牌堆尺寸
     deckBoxPos(){
       const { deckBoxPos } = this.boxConfig
@@ -158,6 +161,16 @@ export default {
         opacity: 0.7;
       } 
     }
+  }
+
+  .game-lock-mask {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 60px; bottom: 0;
+    z-index: 2000;
+    // 用于调试 游戏画面锁定遮罩
+    // background-color: rgba(0, 0, 0, 0.6);
   }
 }
 </style>

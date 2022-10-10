@@ -65,6 +65,8 @@ export default createStore({
         rmCountMultiple: 2,
       }
     },
+    // 锁定游戏画面
+    gameLocked: false
   },
   getters: {},
   mutations: {
@@ -261,6 +263,14 @@ export default createStore({
         item.pos.x = state.boxConfig.cacheBoxPos.x + index * state.options.card.width
       })
     },
+    /**
+     * 锁定或解锁游戏画面，防止用户继续进行操作
+     * @param state 
+     * @param isLocked 锁定状态
+     */
+    lockGame(state, isLocked=true){
+      state.gameLocked = isLocked
+    }
   },
   actions: {
     /**
@@ -268,6 +278,7 @@ export default createStore({
      * @param context 
      */
     async initGame({ state, commit }) {
+      commit('lockGame', true)
       commit('initCardData')
       for(let i=0; i<state.deck.length; i++){
         await delay(10)
@@ -276,6 +287,7 @@ export default createStore({
       // 计算牌堆内卡牌覆盖关系
       await delay(300)
       commit('checkCardCover')
+      commit('lockGame', false)
     },
     /**
      * 点击卡牌，移入缓存堆，进行后续决策
@@ -327,6 +339,7 @@ export default createStore({
      * @param state 
      */
     async moveAllToDeck({ state, commit }){
+      commit('lockGame', true)
       // 移除缓存堆中的所有卡牌
       const toDeckCards = state.cache.splice(0, state.cache.length)
       // 将移除的卡牌，重新生成其在牌堆中的坐标
@@ -340,12 +353,14 @@ export default createStore({
       // 计算牌堆内卡牌覆盖关系
       await delay(300)
       commit('checkCardCover')
+      commit('lockGame', false)
     },
     /**
      * 重新排列牌堆中的卡牌
      * @param state 
      */
     async refreshDeck({ state, commit}){
+      commit('lockGame', true)
       // 重新随机生成牌堆中所有卡牌的坐标
       for(let i=0; i<state.deck.length; i++){
         state.deck[i].pos = state.boxConfig.deckBoxCenter
@@ -359,6 +374,7 @@ export default createStore({
       // 计算牌堆内卡牌覆盖关系
       await delay(300)
       commit('checkCardCover')
+      commit('lockGame', false)
     },
   },
   modules: {},
