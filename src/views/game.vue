@@ -1,7 +1,7 @@
 <template>
   <div class="game">
     <top-nav title="Game">
-      <template #extra>
+      <template #extra v-if="false">
         <el-button>游戏设置</el-button>
       </template>
     </top-nav>
@@ -78,6 +78,7 @@ export default {
 
       // 初始化缓存堆相对页面的坐标
       this.initBoxPos({
+        // 牌堆可用区域
         deckBoxPos: {
           top: 70,
           bottom: cacheBoxPos.y - 50,

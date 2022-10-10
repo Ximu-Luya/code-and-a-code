@@ -167,7 +167,7 @@ export default createStore({
         (rowGridOffset === 0 && rowOffset < 0) ||
         (columnGridOffset === 0 && columnOffset < 0) ||
         (rowGridOffset === deckGrid.row - 1 && rowOffset > 0) ||
-        (columnGridOffset === deckGrid.row - 1 && columnOffset > 0)
+        (columnGridOffset === deckGrid.column - 1 && columnOffset > 0)
       )
 
       // 根据网格偏移与卡牌内偏移计算随机后的卡牌位置
