@@ -363,6 +363,7 @@ export default createStore({
       commit('lockGame', true)
       // 重新随机生成牌堆中所有卡牌的坐标
       for(let i=0; i<state.deck.length; i++){
+        await delay(5)
         state.deck[i].pos = state.boxConfig.deckBoxCenter
         state.deck[i].isCover = false
       }

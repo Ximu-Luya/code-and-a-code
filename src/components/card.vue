@@ -39,7 +39,7 @@ export default {
     ...mapState(['options']),
     style(){
       return {
-        transform: `translate(${this.cardData.pos.x}px, ${this.cardData.pos.y}px)`,
+        transform: `translate3d(${this.cardData.pos.x}px, ${this.cardData.pos.y}px, 0)`,
         width: `${this.options.card.width}px`,
         height: `${this.options.card.height}px`
       }
