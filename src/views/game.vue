@@ -5,7 +5,7 @@
         <el-button>游戏设置</el-button>
       </template>
     </top-nav>
-    <card v-for="item in allCards" :key="item" :card-data="item"></card>
+    <card v-for="item in allCards" :key="item.id" :card-data="item"></card>
     
     <div class="deck" :style="deckBoxPos">
       <div class="border"></div>

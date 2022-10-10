@@ -123,10 +123,11 @@ export default createStore({
       state.cache = []
       // 卡牌初始在牌堆中央
       const deckBoxCenter = boxConfig.deckBoxCenter
+      let allCards = []
 
       for (let cardCode = 0, id = 0; cardCode < groupCount; cardCode++) {
         for (let cardCount = 0; cardCount < perGroup; cardCount++) {
-          state.allCards.push({
+          allCards.push({
             id: id++,
             code: cardCode,
             pos: {
@@ -141,7 +142,7 @@ export default createStore({
       }
 
       // 打乱生成的顺序卡牌数组
-      state.allCards = _.shuffle(state.allCards)
+      state.allCards = _.shuffle(allCards)
       // 所有卡牌初始在牌堆中
       state.deck = state.allCards.map(item => item)
     },
