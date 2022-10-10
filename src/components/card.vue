@@ -19,7 +19,7 @@
     </div>
     <div
       class="mask"
-      :class="{'covered': cardData.isCover, 'show': !cardData.isCover}"
+      :class="{'show': cardData.isCover, 'hide': !cardData.isCover}"
     ></div>
   </div>
 </template>
@@ -117,11 +117,11 @@ export default {
     background-color: #000;
     transition: .3s;
 
-    &.covered{
+    &.show{
       opacity: 0.6;
     }
 
-    &.show {
+    &.hide {
       opacity: 0;
     }
   }
