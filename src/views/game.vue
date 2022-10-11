@@ -66,7 +66,7 @@ export default {
     this.initGame()
   },
   methods: {
-    ...mapMutations(['initBoxPos']),
+    ...mapMutations(['initBoxPos', 'setCardSize']),
     ...mapActions(['initGame', 'moveAllToDeck', 'refreshDeck']),
     /**
      * 初始化页面各容器坐标
@@ -76,14 +76,25 @@ export default {
       const pagePos = document.querySelector(".game").getBoundingClientRect()
       const cacheBoxPos = document.querySelector(".cache").getBoundingClientRect()
 
+      let deckHorizontalOffset, cardSize
+      if ( pagePos.width < 400 ){
+        deckHorizontalOffset = 20
+        cardSize = 40
+      } else {
+        deckHorizontalOffset = 50
+        cardSize = 50
+      }
+      // 设置卡牌尺寸
+      this.setCardSize(cardSize)
+
       // 初始化缓存堆相对页面的坐标
       this.initBoxPos({
         // 牌堆可用区域
         deckBoxPos: {
           top: 70,
           bottom: cacheBoxPos.y - 50,
-          left: 50,
-          right: pagePos.width - 50,
+          left: deckHorizontalOffset,
+          right: pagePos.width - deckHorizontalOffset,
         },
         cacheBoxPos: {
           x: cacheBoxPos.x - pagePos.x,

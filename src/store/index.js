@@ -51,7 +51,7 @@ export default createStore({
         height: 50
       },
       // 缓存堆最大容量
-      cacheMax: 6,
+      cacheMax: 7,
       group: {
         name: 'FrontEnd',
         // 多少张牌可以消除
@@ -71,6 +71,14 @@ export default createStore({
   getters: {},
   mutations: {
     /**
+     * 设置卡牌大小
+     * @param state 
+     * @param size 卡牌尺寸
+     */
+    setCardSize(state, size){
+      state.options.card = { width: size, height: size }
+    },
+    /**
      * 初始化页面容器坐标
      * @param state
      * @param pos 牌堆与缓存堆坐标
@@ -79,10 +87,19 @@ export default createStore({
       const { card } = state.options
 
       // 以卡牌长宽为一个方格，计算整数个方格划分牌堆后的实际牌堆偏移量
-      const deckHorizontalOffset = ((deckBoxPos.right - deckBoxPos.left) % card.width) / 2
-      const deckVerticalOffset = ((deckBoxPos.bottom - deckBoxPos.top) % card.height) / 2
+      let deckHorizontalOffset, deckVerticalOffset
+      deckHorizontalOffset = ((deckBoxPos.right - deckBoxPos.left) % card.width) / 2
+      deckVerticalOffset = ((deckBoxPos.bottom - deckBoxPos.top) % card.height) / 2
+
+      // 如果水平与垂直方向长度大于 8个网格，限制网格为最大8个计算偏移量
+      if(deckBoxPos.right - deckBoxPos.left - card.width * 8 > 0) {
+        deckHorizontalOffset = (deckBoxPos.right - deckBoxPos.left - card.width * 8) / 2
+      }
+      if(deckBoxPos.bottom - deckBoxPos.top - card.height * 8 > 0) {
+        deckVerticalOffset = (deckBoxPos.bottom - deckBoxPos.top - card.height * 8) / 2
+      }
       
-      // 计算方格后的牌堆坐标
+      // 计算网格化后的实际的牌堆尺寸
       const realDeckPos = {
         top: deckBoxPos.top + deckVerticalOffset,
         bottom: deckBoxPos.bottom - deckVerticalOffset,
@@ -322,7 +339,7 @@ export default createStore({
             alert('游戏胜利，恭喜你')
             dispatch('initGame')
           }
-        }, 1000)
+        }, 310)
       } else {
         // 缓存堆卡牌达到数量上限且无法消除卡牌，则游戏结束
         if(state.cache.length === state.options.cacheMax) {
@@ -364,7 +381,7 @@ export default createStore({
       commit('lockGame', true)
       // 重新随机生成牌堆中所有卡牌的坐标
       for(let i=0; i<state.deck.length; i++){
-        await delay(5)
+        await delay(10)
         state.deck[i].pos = state.boxConfig.deckBoxCenter
         state.deck[i].isCover = false
       }
