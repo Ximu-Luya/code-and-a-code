@@ -1,5 +1,10 @@
 <template>
-  <xm-dialog :visible="visible" title="道具使用" @close="$emit('update:visible', false)">
+  <xm-dialog
+    :visible="visible"
+    title="道具使用"
+    @close="$emit('update:visible', false)"
+    height="400px"
+  >
     <div class="item-dialog-box">
       <el-image></el-image>
       <div class="owned-count"> 当前拥有： {{count}} 个</div>

@@ -5,7 +5,8 @@
     @open="handleOpen"
     class="dialog animate__animated"
     :class="{ 'animate__zoomOut': disappearing, 'animate__zoomIn': !disappearing}"
-    width="70%"
+    :width="width || '70%'"
+    :style="{height: height || '600px'}"
     center
     :title="title"
   >
@@ -15,7 +16,7 @@
 
 <script>
 export default {
-  props: ['visible', 'title'],
+  props: ['visible', 'title', 'width', 'height'],
   data() {
     return {
       disappearing: false
@@ -45,6 +46,7 @@ export default {
 .dialog {
   max-height: 70%;
   height: 600px;
+  min-width: 350px;
 }
 .el-dialog__body {
   position: absolute;

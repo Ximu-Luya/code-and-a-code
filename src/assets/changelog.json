@@ -4,6 +4,15 @@
     "update": "2022-10-11",
     "changes": [
       {
+        "type": "Feature",
+        "content": [
+          {
+            "title": "修改",
+            "description": "优化了对话框在移动端的显示样式"
+          }
+        ]
+      },
+      {
         "type": "Bug Fixes",
         "content": [
           {
