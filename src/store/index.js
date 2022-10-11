@@ -358,6 +358,7 @@ export default createStore({
           if (state.allCards.length === 0) {
             alert('游戏胜利，恭喜你')
             dispatch('initGame')
+            return 
           }
         }, 310)
       } else {
@@ -366,8 +367,8 @@ export default createStore({
           setTimeout(() => {
             alert('游戏结束，点击确定重新开始')
             dispatch('initGame')
+            return 
           }, 310);
-          return 
         }
       }
     },
