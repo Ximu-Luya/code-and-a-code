@@ -18,6 +18,12 @@ export default createStore({
     deck: [],
     // 缓存堆
     cache: [],
+    items: {
+      // 刷新道具数量
+      refresh: 1,
+      // 返回牌堆道具数量
+      back: 1,
+    },
     // 页面容器坐标
     boxConfig: {
       // 牌堆四边位置
@@ -281,6 +287,16 @@ export default createStore({
       })
     },
     /**
+     * 设置道具数量
+     * @param state 
+     * @param prop 道具prop名
+     * @param num 道具数量
+     */
+    setItemCount(state, { prop, value }) {
+      if(state.items[prop] === undefined) return
+      state.items[prop] = value
+    },
+    /**
      * 锁定或解锁游戏画面，防止用户继续进行操作
      * @param state 
      * @param isLocked 锁定状态
@@ -297,6 +313,10 @@ export default createStore({
     async initGame({ state, commit }) {
       commit('lockGame', true)
       commit('initCardData')
+      // 重置道具数量
+      commit('setItemCount', {prop: 'refresh', value: 1})
+      commit('setItemCount', {prop: 'back', value: 1})
+      // 随机生成卡牌位置
       for(let i=0; i<state.deck.length; i++){
         await delay(10)
         commit('randomCardPos', state.deck[i])

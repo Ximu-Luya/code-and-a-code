@@ -15,15 +15,33 @@
     </div>
 
     <div class="game-function">
-      <div class="item" @click="refreshDeck">
-        <i class="el-icon-refresh"></i>
-        <span>重新打乱牌堆</span>
-      </div>
-      <div class="item" @click="moveAllToDeck">
-        <i class="el-icon-upload2"></i>
-        <span>卡牌返回牌堆</span>
-      </div>
+      <el-badge :value="items.refresh">
+        <div class="item" @click="this.refreshItemVisible = true">
+          <span>重新打乱牌堆</span>
+        </div>
+      </el-badge>
+
+      <el-badge :value="items.back">
+        <div class="item" @click="this.backItemVisible = true">
+          <span>卡牌返回牌堆</span>
+        </div>
+      </el-badge>
     </div>
+
+    <item-dialog
+      v-model:visible="refreshItemVisible"
+      :item-data="{
+        prop: 'refresh',
+        description: '使用道具可以重新随机生成卡牌在牌堆中的位置'
+      }"
+    ></item-dialog>
+    <item-dialog
+      v-model:visible="backItemVisible"
+      :item-data="{
+        prop: 'back',
+        description: '使用道具可以让缓存区的卡牌返回牌堆中的随机位置'
+      }"
+    ></item-dialog>
 
     <!-- 游戏锁定遮罩，防止玩家在游戏动画进行时操作 -->
     <div class="game-lock-mask" v-if="gameLocked"></div>
@@ -34,13 +52,27 @@
 import TopNav from '@/components/topNav.vue'
 import Card from '@/components/card.vue'
 import { mapState, mapMutations, mapActions } from 'vuex'
+import ItemDialog from '@/components/itemDialog.vue'
 export default {
   components: {
     Card,
-    TopNav
+    TopNav,
+    ItemDialog
+  },
+  data(){
+    return {
+      refreshItemVisible: false,
+      backItemVisible: false
+    }
   },
   computed: {
-    ...mapState(['allCards', 'options', 'boxConfig', 'gameLocked']),
+    ...mapState([
+      'allCards',
+      'options',
+      'boxConfig',
+      'gameLocked',
+      'items',
+    ]),
     // 牌堆尺寸
     deckBoxPos(){
       const { deckBoxPos } = this.boxConfig
@@ -58,7 +90,7 @@ export default {
         width: `${cacheMax * card.width}px`,
         height: `${card.height}px`
       }
-    }
+    },
   },
   mounted(){
     this.initPos()
