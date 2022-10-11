@@ -342,14 +342,15 @@ export default createStore({
       commit('lockGame', true)
       // 移除缓存堆中的所有卡牌
       const toDeckCards = state.cache.splice(0, state.cache.length)
+      // 将从缓存堆中移除的卡牌加入牌堆中
+      state.deck.push(...toDeckCards)
+      state.deck = _.intersection(state.allCards, state.deck)
       // 将移除的卡牌，重新生成其在牌堆中的坐标
       toDeckCards.forEach(item => {
         commit('randomCardPos', item)
         // 设置缓存状态为false
         item.cached = false
       })
-      // 将从缓存堆中移除的卡牌加入牌堆中
-      state.deck.push(...toDeckCards)
       // 计算牌堆内卡牌覆盖关系
       await delay(300)
       commit('checkCardCover')
