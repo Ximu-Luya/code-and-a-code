@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import packageConfig from "@/../package.json"
+import changelogdata from "@/assets/changelog.json"
 import ChangeLog from '@/components/changeLog.vue';
 import ErrorLog from "@/components/errorLog.vue";
 export default {
@@ -27,7 +27,7 @@ export default {
 },
   data(){
     return {
-      version: packageConfig.version,
+      version: changelogdata[0].version,
       changeLogVisible: false,
       errorLogVisible: false
     }
