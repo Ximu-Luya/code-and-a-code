@@ -1,5 +1,44 @@
 [
   {
+    "version": "0.3.0-beta",
+    "update": "2022-10-10",
+    "changes": [
+      {
+        "type": "Feature",
+        "content": [
+          {
+            "title": "新增",
+            "description": "卡牌生成规则修改为网格式布局使其显示更加美观"
+          },
+          {
+            "title": "新增",
+            "description": "初始化牌组时随机打乱牌组顺序保证其随机性"
+          },
+          {
+            "title": "新增",
+            "description": "卡牌新增覆盖碰撞检测，被覆盖的卡牌将无法被点击"
+          },
+          {
+            "title": "新增",
+            "description": "卡牌样式调整为正方形，并取消显示名称"
+          },
+          {
+            "title": "新增",
+            "description": "通过域名后路径可以访问alpha与beta版本"
+          },
+          {
+            "title": "新增",
+            "description": "优化卡牌的洗牌随机动画"
+          },
+          {
+            "title": "修改",
+            "description": "缓存区的最大容量增加到7"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "0.2.0",
     "update": "2022-09-25",
     "changes": [
