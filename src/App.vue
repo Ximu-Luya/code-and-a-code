@@ -1,8 +1,18 @@
 <template>
-  <div class="page">
+  <div class="page" @click="handleGlobalClick">
     <router-view/>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    handleGlobalClick(){
+      window.navigator.vibrate(20)
+    }
+  }
+}
+</script>
 
 <style lang="scss">
 @import url("@/main.scss");
