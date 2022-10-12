@@ -1,18 +1,6 @@
 import dayjs from 'dayjs'
 import { ElNotification } from 'element-plus'
 
-// 全局错误捕获
-function globalErrorHandle(msg,url,l,c,error) {
-  console.error("全局错误捕获已处理：\n", msg);
-  ElNotification({
-    title: '全局错误捕获',
-    message: '模块已捕获到错误，游戏进程可能受到影响，请刷新页面重新游戏，并联系开发者',
-    duration: 0,
-    type: 'warning',
-  })
-  errorCache(error)
-}
-
 // 错误缓存
 function errorCache(error) {
   const errorTime = new dayjs().format('YYYY-MM-DD HH:mm:ss') 
@@ -24,5 +12,14 @@ function errorCache(error) {
   localStorage.setItem("errorNotReport", JSON.stringify(errorNotReport))
 }
 
-window.onerror = globalErrorHandle;
-window.errorCache = errorCache
+// 全局错误捕获
+export function globalErrorHandle(msg, error) {
+  console.error("全局错误捕获已处理：\n", msg);
+  ElNotification({
+    title: '全局错误捕获',
+    message: '模块已捕获到错误，游戏进程可能受到影响，请刷新页面重新游戏，并联系开发者',
+    duration: 0,
+    type: 'warning',
+  })
+  errorCache(error)
+}
