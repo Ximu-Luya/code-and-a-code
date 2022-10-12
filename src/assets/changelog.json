@@ -1,6 +1,21 @@
 [
   {
-    "version": "0.3.1-beta",
+    "version": "0.3.2-alpha",
+    "update": "2022-10-12",
+    "changes": [
+      {
+        "type": "Feature",
+        "content": [
+          {
+            "title": "修改",
+            "description": "优化了卡牌生成规则，降低难度的同时使游戏前期更加轻松"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "0.3.1",
     "update": "2022-10-11",
     "changes": [
       {

@@ -137,20 +137,22 @@ export default createStore({
      * @param state
      */
     initCardData(state) {
-      const { boxConfig, options } = state
+      const { group } = state.options
       // 卡牌组数 = 卡牌Icon数组长度
-      const groupCount = CardIconData[options.group.name].length
-      // 每组卡牌数 = 卡牌消除数 * 消除数倍数
-      const perGroup = options.group.removeCount * options.group.rmCountMultiple
+      const groupCount = CardIconData[group.name].length
       // 初始化元数据、牌堆、缓存堆
       state.allCards = []
       state.deck = []
       state.cache = []
       // 卡牌初始在牌堆中央
-      const deckBoxCenter = boxConfig.deckBoxCenter
+      const deckBoxCenter = state.boxConfig.deckBoxCenter
       let allCards = []
 
+      // 随机 1/3 卡牌为卡牌数较少的稀有卡牌
+      const rareCodes = _.sampleSize(_.range(groupCount), groupCount / 3)
       for (let cardCode = 0, id = 0; cardCode < groupCount; cardCode++) {
+        // 每组卡牌数 = 卡牌消除数 * 消除数倍数(4组卡牌6张，8组卡牌15张)
+        let perGroup = rareCodes.includes(cardCode) ? 2*group.removeCount : 5*group.removeCount
         for (let cardCount = 0; cardCount < perGroup; cardCount++) {
           allCards.push({
             id: id++,
@@ -165,9 +167,18 @@ export default createStore({
           })
         }
       }
-
-      // 打乱生成的顺序卡牌数组
-      state.allCards = _.shuffle(allCards)
+      
+      /**
+       * 打乱数组前 2/3 的卡牌顺序
+       * 即打乱底部最后 2/3 的卡牌顺序
+       * 游戏进程的前 1/3 卡牌维持顺序保证游戏进程前半部分顺畅
+       */
+      allCards = [
+        _.slice(allCards, 0, allCards.length * 3/4),
+        _.slice(allCards, allCards.length * 3/4)
+      ]
+      allCards[0] = _.shuffle(allCards[0])
+      state.allCards = _.flatMapDeep(allCards)
       // 所有卡牌初始在牌堆中
       state.deck = state.allCards.map(item => item)
     },

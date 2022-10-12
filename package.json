@@ -1,12 +1,12 @@
 {
   "name": "code-and-a-code",
-  "version": "0.3.1-beta",
+  "version": "0.3.2-alpha",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build:release": "vue-cli-service build",
-    "build:alpha": "vue-cli-service build outputdir=alpha",
-    "build:beta": "vue-cli-service build outputdir=beta"
+    "build:alpha": "outputdir=alpha vue-cli-service build",
+    "build:beta": "outputdir=beta vue-cli-service build"
   },
   "dependencies": {
     "animate.css": "^4.1.1",
