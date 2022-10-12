@@ -11,8 +11,8 @@
     <div class="content">
       <div class="img-box">
         <img
-          :src="CardIcon.FrontEnd[cardData.code].src"
-          :alt="`${CardIcon.FrontEnd[cardData.code].name}[${cardData.code}]`"
+          :src="CardIcon[cardData.code].src"
+          :alt="`${CardIcon[cardData.code].name}[${cardData.code}]`"
           draggable="false"
         >
       </div>
@@ -32,7 +32,6 @@ export default {
   data(){
     return {
       cached: false,
-      CardIcon: CardIcon
     }
   },
   computed: {
@@ -44,6 +43,9 @@ export default {
         height: `${this.options.card.height}px`
       }
     },
+    CardIcon() {
+      return CardIcon[this.options.group.name]
+    }
   },
   methods: {
     ...mapActions(['saveInCache']),
