@@ -348,8 +348,9 @@ export default createStore({
       // 卡牌移入缓存堆
       commit('moveToCache', currentCard)
       // 计算牌堆内卡牌覆盖关系
-      await delay(300)
-      commit('checkCardCover')
+      setTimeout(() => {
+        commit('checkCardCover')
+      }, 300)
 
       // 在缓存堆中寻找与当前卡牌code值相同的卡牌
       const targets = state.cache.filter(item => item.code === currentCard.code)
@@ -359,7 +360,9 @@ export default createStore({
         const sameCards = state.cache.filter(item => item.code === currentCard.code)
         // 先执行缓存堆中的卡牌消除，以防止在动画执行过程中继续添加卡牌导致游戏结束
         commit('removeSameCardInCache', sameCards)
-        sameCards.forEach(item => (item.disappearing = true))
+        setTimeout(() => {
+          sameCards.forEach(item => (item.disappearing = true))
+        }, 300)
         // 消除动画执行结束后，从总卡牌数据中消除卡牌
         setTimeout(() => {
           commit('removeSameCardInAll', sameCards)
@@ -371,7 +374,7 @@ export default createStore({
             dispatch('initGame')
             return 
           }
-        }, 310)
+        }, 600)
       } else {
         // 缓存堆卡牌达到数量上限且无法消除卡牌，则游戏结束
         if(state.cache.length === state.options.cacheMax) {
