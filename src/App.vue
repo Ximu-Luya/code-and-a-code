@@ -8,7 +8,9 @@
 export default {
   methods: {
     handleGlobalClick(){
-      window.navigator.vibrate(20)
+      if(window.navigator) {
+        window.navigator.vibrate(20)
+      }
     }
   }
 }
