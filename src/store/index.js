@@ -215,8 +215,9 @@ export default createStore({
       function generateGridOffset(max_grid){
         const center = [Math.floor(max_grid / 2 - max_grid * 1/6), Math.ceil(max_grid / 2 + max_grid * 1/6)]
 
-        // 50%概率卡牌生成在牌堆中间部分，50%概率卡牌完全随机生成
-        if(probabilityGenerate(50)){
+        // 剩余100卡牌开始，生成卡牌位置在牌堆中间的概率提升
+        const percentage = _.clamp(150-state.deck.length, 50, 100)
+        if(probabilityGenerate(percentage)){
           return _.random(center[0], center[1])
         } else {
           return _.random(max_grid)
