@@ -1,6 +1,30 @@
 [
   {
-    "version": "0.3.2-alpha",
+    "version": "0.3.3-alpha",
+    "update": "2022-10-17",
+    "changes": [
+      {
+        "type": "Feature",
+        "content": [
+          {
+            "title": "新增",
+            "description": "新增了静默异常捕获功能，启用后捕获到异常时将不会弹出提示"
+          }
+        ]
+      },
+      {
+        "type": "Bug Fixes",
+        "content": [
+          {
+            "title": "修复",
+            "description": "修复了在iOS中，无法调用震动API而不断发生异常的问题。修改为：API能够被调用时，才调用震动"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "0.3.2",
     "update": "2022-10-12",
     "changes": [
       {

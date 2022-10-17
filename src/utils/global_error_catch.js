@@ -14,12 +14,15 @@ function errorCache(error) {
 
 // 全局错误捕获
 export function globalErrorHandle(msg, error) {
-  console.error("全局错误捕获已处理：\n", msg);
-  ElNotification({
-    title: '全局错误捕获',
-    message: '模块已捕获到错误，游戏进程可能受到影响，请刷新页面重新游戏，并联系开发者',
-    duration: 0,
-    type: 'warning',
-  })
+  console.error("全局错误捕获已处理：\n", msg)
+  // 静默异常捕获为false时，捕获错误时提示异常
+  if(!JSON.parse(localStorage.getItem("isMuteErrorCatch"))){
+    ElNotification({
+      title: '全局错误捕获',
+      message: '模块已捕获到错误，游戏进程可能受到影响，请刷新页面重新游戏，并联系开发者',
+      duration: 0,
+      type: 'warning',
+    })
+  }
   errorCache(error)
 }
