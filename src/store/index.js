@@ -2,12 +2,30 @@ import { createStore } from 'vuex'
 import CardIconData from '@/assets/card.icon.json'
 import _ from "lodash"
 
+/**
+ * 延时方法
+ * @param {Number} time 延时时间，单位ms
+ */
 function delay(time) {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve()
     }, time)
   })
+}
+
+/**
+ * 根据百分比概率生成结果（true or false）
+ * @param {Number} percentage 概率（百分比）
+ * @returns Boolean 根据概率生成的结果
+ */
+function probabilityGenerate(percentage) {
+  // 概率大于100%，恒真
+  if(percentage > 100) return true
+  // 概率小于0%，恒假
+  if(percentage <= 0) return false
+  
+  return _.random(1, 100) <= percentage
 }
 
 export default createStore({
@@ -174,11 +192,14 @@ export default createStore({
        * 游戏进程的前 1/3 卡牌维持顺序保证游戏进程前半部分顺畅
        */
       allCards = [
-        _.slice(allCards, 0, allCards.length * 3/4),
-        _.slice(allCards, allCards.length * 3/4)
+        _.slice(allCards, 0, allCards.length * 5/6),
+        _.slice(allCards, allCards.length * 5/6)
       ]
       allCards[0] = _.shuffle(allCards[0])
       state.allCards = _.flatMapDeep(allCards)
+      
+      // 防止难度过低，暂时全部打乱
+      // state.allCards = _.shuffle(allCards)
       // 所有卡牌初始在牌堆中
       state.deck = state.allCards.map(item => item)
     },
@@ -189,9 +210,21 @@ export default createStore({
     randomCardPos(state, currentCard){
       const { deckGrid, deckBoxPos } = state.boxConfig
       const { card } = state.options
+
+      // 生成网格偏移
+      function generateGridOffset(max_grid){
+        const center = [Math.floor(max_grid / 2 - max_grid * 1/6), Math.ceil(max_grid / 2 + max_grid * 1/6)]
+
+        // 50%概率卡牌生成在牌堆中间部分，50%概率卡牌完全随机生成
+        if(probabilityGenerate(50)){
+          return _.random(center[0], center[1])
+        } else {
+          return _.random(max_grid)
+        }
+      }
       // 随机水平与垂直网格偏移
-      const rowGridOffset = _.random(deckGrid.row - 1)
-      const columnGridOffset = _.random(deckGrid.column - 1)
+      const rowGridOffset = generateGridOffset(deckGrid.row - 1)
+      const columnGridOffset = generateGridOffset(deckGrid.column - 1)
       // 随机水平与垂直卡牌内偏移
       let rowOffset, columnOffset
       do {
