@@ -3,6 +3,7 @@ node_modules
 /release
 /alpha
 /beta
+package-lock.json
 
 
 # local env files
