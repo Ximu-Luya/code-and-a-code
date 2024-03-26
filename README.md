@@ -12,4 +12,4 @@ npm run serve
 npm run build
 ```
 ## Contact Me
-Contact me via email(794876939@qq.com), or submit an issue directly in this repository.
+Contact me via email, or submit an issue directly in this repository.
