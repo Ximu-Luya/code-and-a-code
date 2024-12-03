@@ -1,65 +1,68 @@
 <template>
-  <el-dialog
-    v-model="visible"
-    @close="handleClose"
-    @open="handleOpen"
-    class="dialog animate__animated"
-    :class="{ 'animate__zoomOut': disappearing, 'animate__zoomIn': !disappearing}"
-    :width="width || '70%'"
-    :style="{height: height || '600px'}"
-    center
-    :title="title"
-  >
-    <slot></slot>
-  </el-dialog>
+  <Teleport to="body">
+    <!-- 遮罩层过渡 -->
+    <Transition
+      enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
+    >
+      <div 
+        v-if="visible" 
+        class="fixed inset-0 bg-black/50 z-[999]"
+        @click="handleClose"
+      ></div>
+    </Transition>
+
+    <!-- 对话框过渡 -->
+    <Transition
+      enter-active-class="animate__animated animate__zoomIn"
+      leave-active-class="animate__animated animate__zoomOut"
+    >
+      <div 
+        v-if="visible" 
+        class="fixed inset-4 flex items-center justify-center z-[1000]"
+        @click="handleClose"
+      >
+        <div 
+          class="bg-white rounded-lg shadow-lg min-w-350px max-h-[calc(100vh-2rem)] flex flex-col"
+          :style="{ width: props.width }"
+          @click.stop
+        >
+          <!-- 标题栏 -->
+          <div class="px-6 py-6 border-b flex items-center justify-between shrink-0">
+            <div class="text-xl font-medium">{{ props.title }}</div>
+            <div 
+              class="i-icon-park-outline-close text-xl text-gray-400 hover:text-gray-600 cursor-pointer"
+              @click="handleClose"
+            ></div>
+          </div>
+          
+          <!-- 内容区 -->
+          <div class="p-6 overflow-auto">
+            <slot></slot>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
-<script>
-export default {
-  props: ['visible', 'title', 'width', 'height'],
-  data() {
-    return {
-      disappearing: false
-    }
-  },
-  emits: ['close'],
-  methods: {
-    handleClose() {
-      this.$emit('close')
-      this.disappearing = true
-    },
-    handleOpen() {
-      // 打开弹窗时取消消失动画以防止弹窗打开后马上关闭
-      this.disappearing = false
-    }
-  },
+<script setup lang="ts">
+const emit = defineEmits(['close'])
+
+const props = defineProps<{
+  title: string
+  width?: string
+}>()
+
+const visible = defineModel<boolean>('visible', { required: true })
+
+const handleClose = () => {
+  visible.value = false
 }
 </script>
 
-<style lang="scss">
-// 弹窗动画持续时间修改为0.3秒
+<style>
 .animate__animated {
-  &.animate__zoomIn, &.animate__zoomOut {
-    --animate-duration: 0.3s;
-  }
-}
-.dialog {
-  max-height: 70%;
-  height: 600px;
-  min-width: 350px;
-}
-.el-dialog__body {
-  position: absolute;
-  top: 54px; bottom: 0;
-  width: 100%;
-  padding-top: 0;
-  overflow: auto;
-}
-// 使element-plus对话框相对页面元素而非body
-.el-overlay {
-  position: absolute !important;
-  .el-overlay-dialog {
-    position: absolute !important;
-  }
+  animation-duration: 0.3s;
 }
 </style>

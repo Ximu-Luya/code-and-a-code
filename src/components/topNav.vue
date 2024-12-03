@@ -1,45 +1,27 @@
 <template>
-  <div class="top-nav">
-    <el-page-header @back="handleBack">
-      <template #content>
-        <span class="text-large font-600 mr-3"> {{ title }} </span>
-      </template>
-      <template #extra>
-        <div class="flex items-center">
-          <slot name="extra"></slot>
-        </div>
-      </template>
-    </el-page-header>
+  <div class="w-full px-4 h-14 flex items-center border-b border-gray-100">
+    <RouterLink
+      class="flex items-center cursor-pointer h-full flex items-center text-base-900 decoration-none"
+      to="/"
+    >
+      <div class="i-icon-park-outline:arrow-left mr-2"></div>
+      <span class="text-base-900">Back</span>
+    </RouterLink>
+
+    <div class="mx-3 h-4 w-px bg-gray-300"></div>
+
+    <div class="text-lg font-medium text-base-900 h-full flex items-center">
+      {{ props.title }}
+    </div>
+
+    <div class="flex items-center ml-auto">
+      <slot name="extra"></slot>
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  props: ['title'],
-  methods: {
-    handleBack() {
-      this.$router.replace('/home')
-    },
-  },
-}
+<script setup lang="ts">
+const props = defineProps<{
+  title: string
+}>()
 </script>
-
-<style lang="scss" scoped>
-.top-nav {
-  width: 100%;
-  padding: 0 20px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-
-  >* {
-    flex-grow: 1;
-  }
-}
-</style>
-<style>
-/* 去除导航栏面包屑的默认margin */
-.el-page-header__breadcrumb {
-  margin: 0 !important;
-}
-</style>

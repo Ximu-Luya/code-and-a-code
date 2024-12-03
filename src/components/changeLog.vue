@@ -1,9 +1,9 @@
 <template>
-  <xm-dialog :visible="visible" title="更新日志" @close="$emit('update:visible', false)">
+  <Dialog :visible="visible" @update:visible="visible = $event" title="更新日志">
     <article class="markdown-body">
       <div
-        v-for="logItem in logs"
-        :key="logItem.date"
+        v-for="logItem in ChangeLogData"
+        :key="logItem.update"
         class="change-log-item"
       >
         <h2>{{ logItem.version }} ({{ logItem.update }})</h2>
@@ -18,24 +18,14 @@
         </template>
       </div>
     </article>
-  </xm-dialog>
+  </Dialog>
 </template>
 
-<script>
+<script setup lang="ts">
+import Dialog from './Dialog.vue'
 import ChangeLogData from '@/assets/changelog.json'
-import XmDialog from "./dialog.vue"
-export default {
-  components: {
-    XmDialog
-  },
-  emits: ['update:visible'],
-  props: ['visible'],
-  data() {
-    return {
-      logs: ChangeLogData
-    }
-  },
-}
+
+const visible = defineModel<boolean>('visible', { required: true })
 </script>
 
 <style lang="scss" scoped>

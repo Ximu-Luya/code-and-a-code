@@ -2,8 +2,8 @@
   <div
     class="card-item layout-center box-shadow"
     :class="{
-      'hide': cardData.disappearing,
-      'border': !cardData.isCover
+      hide: cardData.isDisappearing,
+      border: !cardData.isCovered
     }"
     @click="handleClick"
     :style="style"
@@ -11,51 +11,41 @@
     <div class="content">
       <div class="img-box">
         <img
-          :src="CardIcon[cardData.code].src"
-          :alt="`${CardIcon[cardData.code].name}[${cardData.code}]`"
+          :src="CardIconSet[cardData.code].src"
+          :alt="`${CardIconSet[cardData.code].name}[${cardData.code}]`"
           draggable="false"
-        >
+        />
       </div>
     </div>
     <div
       class="mask"
-      :class="{'show': cardData.isCover, 'hide': !cardData.isCover}"
+      :class="{ show: cardData.isCovered, hide: !cardData.isCovered }"
     ></div>
   </div>
 </template>
 
-<script>
-import { mapActions, mapState } from 'vuex';
-import CardIcon from '@/assets/card.icon.json'
-export default {
-  props: ["cardData"],
-  data(){
-    return {
-      cached: false,
-    }
-  },
-  computed: {
-    ...mapState(['options']),
-    style(){
-      return {
-        transform: `translate3d(${this.cardData.pos.x}px, ${this.cardData.pos.y}px, 0)`,
-        width: `${this.options.card.width}px`,
-        height: `${this.options.card.height}px`
-      }
-    },
-    CardIcon() {
-      return CardIcon[this.options.group.name]
-    }
-  },
-  methods: {
-    ...mapActions(['saveInCache']),
-    handleClick(){
-      if (this.cardData.cached) return null
-      if (this.cardData.isCover) return null
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import CardIconData from '@/assets/cardicons.json'
+import { type Card, useGameStore } from '@/store'
 
-      this.saveInCache(this.cardData)
-    },
-  }
+const gameStore = useGameStore()
+
+const { cardData } = defineProps<{ cardData: Card }>()
+
+const style = computed(() => ({
+  transform: `translate3d(${cardData.pos.x}px, ${cardData.pos.y}px, 0)`,
+  width: `${gameStore.gameOptions.card.width}px`,
+  height: `${gameStore.gameOptions.card.height}px`
+}))
+
+const CardIconSet = ref(CardIconData[gameStore.gameOptions.group.name])
+
+const handleClick = () => {
+  if (cardData.isCached) return
+  if (cardData.isCovered) return
+
+  gameStore.saveInCache(cardData)
 }
 </script>
 

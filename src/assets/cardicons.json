@@ -1,0 +1,17 @@
+{
+  "FrontEnd": [
+    { "src": "/img/icons/nginx.png", "name": "Nginx" },
+    { "src": "/img/icons/nodejs.png", "name": "Node.js" },
+    { "src": "/img/icons/javascript.png", "name": "JavaScript" },
+    { "src": "/img/icons/typescript.svg", "name": "TypeScript" },
+    { "src": "/img/icons/chrome.png", "name": "Chorme" },
+    { "src": "/img/icons/glup.png", "name": "Glup" },
+    { "src": "/img/icons/npm.svg", "name": "npm" },
+    { "src": "/img/icons/react.svg", "name": "React.js" },
+    { "src": "/img/icons/rollupjs.png", "name": "Rollup" },
+    { "src": "/img/icons/sass.png", "name": "Sass" },
+    { "src": "/img/icons/vue.svg", "name": "Vue.js" },
+    { "src": "/img/icons/webpack.png", "name": "Webpack" },
+    { "src": "/img/icons/babel.png", "name": "Babel" }
+  ]
+}

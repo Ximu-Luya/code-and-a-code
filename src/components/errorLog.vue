@@ -1,123 +1,122 @@
 <template>
-  <xm-dialog :visible="visible" title="未上报的错误日志" @close="$emit('update:visible', false)">
-    <!-- <el-button type="primary" @click="() => {console.log(abc)}" v-if="true">生成</el-button> -->
-    
-    <div class="action-bar">
-      <el-button :icon="Upload" @click="handleReport">上报</el-button>
-      <el-button type="danger" :icon="Delete" @click="handleClear">清空</el-button>
-      <el-button v-if="!isMute" type="warning" :icon="MuteNotification" @click="handleMute">静默捕获异常</el-button>
-      <el-button v-else type="success" :icon="Bell" @click="handleDisableMute">启用异常提示</el-button>
+  <Dialog v-model:visible="visible" title="未上报的错误日志">
+    <div class="flex justify-center gap-2 mb-4">
+      <button 
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center"
+        @click="handleReport"
+      >
+        <div class="i-icon-park-outline-upload mr-1"></div>上报
+      </button>
+      <button 
+        class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center"
+        @click="handleClear"
+      >
+        <div class="i-icon-park-outline-delete-five mr-1"></div>清空
+      </button>
+      <button 
+        v-if="!isMute" 
+        class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors flex items-center"
+        @click="handleMute"
+      >
+        <div class="i-icon-park-outline-close-remind mr-1"></div>静默捕获异常
+      </button>
+      <button 
+        v-else 
+        class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors flex items-center"
+        @click="handleDisableMute"
+      >
+        <div class="i-icon-park-outline-remind mr-1"></div>启用异常提示
+      </button>
     </div>
 
     <template v-if="logs.length">
-      <el-timeline>
-        <el-timeline-item
-          v-for="logItem in logs"
-          :timestamp="logItem.time"
-          class="error-log-item"
-          placement="top"
+      <div class="space-y-4">
+        <div 
+          v-for="logItem in logs" 
+          :key="logItem.time"
+          class="border rounded-lg p-4 relative"
         >
-          <el-card>
-            <h3 class="message">{{logItem.message}}</h3>
-            <p class="stack">{{logItem.stack}}</p>
-          </el-card>
-        </el-timeline-item>
-      </el-timeline>
+          <div class="text-gray-500 text-sm absolute right-4 top-4">
+            {{ logItem.time }}
+          </div>
+          <h3 class="text-red-600 font-medium mb-2">{{ logItem.message }}</h3>
+          <pre class="text-gray-600 text-sm whitespace-pre-wrap">{{ logItem.stack }}</pre>
+        </div>
+      </div>
     </template>
     <template v-else>
-      <el-empty description="没有错误日志" />
+      <div class="flex flex-col items-center justify-center py-8 text-gray-500">
+        <div class="i-icon-park-outline-folder-withdrawal text-4xl mb-2"></div>
+        <span>没有错误日志</span>
+      </div>
     </template>
-  </xm-dialog>
+  </Dialog>
 </template>
 
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import Dialog from './Dialog.vue'
+import { Message } from './Message'
 
-<script setup>
-import { Upload, Delete, MuteNotification, Bell } from '@element-plus/icons-vue'
-</script>
-<script>
-import { ElMessage } from 'element-plus'
-import XmDialog from "./dialog.vue"
-export default {
-  components: {
-    XmDialog
-  },
-  emits: ['update:visible'],
-  props: ['visible'],
-  data() {
-    return {
-      logs: [],
-      isMute: false
-    }
-  },
-  watch: {
-    visible(){
-      this.getErrorLogs()
-    }
-  },
-  methods: {
-    // 获取错误缓存列表
-    getErrorLogs(){
-      this.logs = JSON.parse(localStorage.getItem("errorNotReport")) || []
-    },
-    // 错误上报
-    handleReport(){
-      ElMessage({
-        showClose: true,
-        message: '开发中',
-        type: 'warning',
-      })
-    },
-    // 清空错误日志
-    handleClear(){
-      localStorage.setItem("errorNotReport", JSON.stringify([]))
-      this.logs = []
-      ElMessage({
-        showClose: true,
-        message: '日志已清空',
-        type: 'success',
-      })
-    },
-    // 静默异常捕获，不提示
-    handleMute(){
-      this.isMute = true
-      localStorage.setItem("isMuteErrorCatch", true)
-      ElMessage({
-        showClose: true,
-        message: '已启用静默',
-        type: 'warning',
-      })
-    },
-    // 启用异常捕获提示
-    handleDisableMute(){
-      this.isMute = false
-      localStorage.setItem("isMuteErrorCatch", false)
-      ElMessage({
-        showClose: true,
-        message: '已关闭静默',
-        type: 'success',
-      })
-    },
-  }
+const visible = defineModel<boolean>('visible', { required: true })
+
+interface ErrorLogItem {
+  time: string
+  message: string
+  stack: string
+}
+
+const logs = ref<ErrorLogItem[]>([])
+const isMute = ref(false)
+
+onMounted(() => {
+  getErrorLogs()
+})
+
+// 获取错误缓存列表
+const getErrorLogs = () => {
+  logs.value = JSON.parse(localStorage.getItem("errorNotReport") || "[]")
+}
+
+// 错误上报
+const handleReport = () => {
+  Message({
+    showClose: true,
+    message: '开发中',
+    type: 'warning',
+  })
+}
+
+// 清空错误日志
+const handleClear = () => {
+  localStorage.setItem("errorNotReport", JSON.stringify([]))
+  logs.value = []
+  Message({
+    showClose: true,
+    message: '日志已清空',
+    type: 'success',
+  })
+}
+
+// 静默异常捕获，不提示
+const handleMute = () => {
+  isMute.value = true
+  Message({
+    showClose: true,
+    message: '已启用静默',
+    type: 'warning',
+  })
+  localStorage.setItem("isMuteErrorCatch", 'true')
+}
+
+// 启用异常捕获提示
+const handleDisableMute = () => {
+  isMute.value = false
+  Message({
+    showClose: true,
+    message: '已关闭静默',
+    type: 'success',
+  })
+  localStorage.setItem("isMuteErrorCatch", 'false')
 }
 </script>
-
-<style lang="scss" scoped>
-ul {
-  padding: 0;
-}
-.action-bar{
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: center;
-}
-.error-log-item {
-
-  .message {
-    margin: 0;
-    color: #c45656;
-  }
-  .stack {
-    white-space: pre-wrap;
-  }
-}
-</style>
